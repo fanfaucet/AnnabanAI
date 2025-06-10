@@ -1,0 +1,430 @@
+#!/usr/bin/env python3
+"""
+AnnabanOS Enhanced - Main Script
+
+This script initializes and runs the AnnabanOS Enhanced system.
+"""
+
+import os
+import sys
+import logging
+import datetime
+import json
+import argparse
+import random
+from typing import Dict, List, Any, Optional
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout),
+        logging.FileHandler('annabanOS.log')
+    ]
+)
+
+logger = logging.getLogger("annabanOS")
+
+# Import AnnabanOS modules
+from config import config
+from agents.base_agent import BaseAgent, Memory, Goal
+from agents.task_agent import TaskAgent
+from agents.social_agent import SocialAgent
+from agents.collective import AgentCollective, AgentRole, CollectiveTask
+from environment.environment import Environment
+from environment.virtual_world import VirtualWorld, VirtualLocation, VirtualObject
+from token_economy.token_manager import TokenManager
+from token_economy.marketplace import TokenMarketplace
+from annabanai.echo_loop import reflect, update_portfolio, EchoLoop
+from annabanai.agent_cua import ConversationalUserAgent
+
+def load_task_scenarios(file_path: str) -> List[Dict[str, Any]]:
+    """Load task scenarios from a JSON file."""
+    try:
+        with open(file_path, 'r') as f:
+            scenarios = json.load(f)
+        return scenarios
+    except Exception as e:
+        logger.error(f"Error loading task scenarios: {e}")
+        return []
+
+def create_demo_environment() -> Environment:
+    """Create a demo environment with agents and collectives."""
+    logger.info("Creating demo environment")
+    
+    # Initialize environment
+    env = Environment()
+    
+    # Create task agents
+    task_agent1 = TaskAgent("TaskMaster")
+    task_agent1.earn_tokens(100, "Initial allocation")
+    task_agent1.learn_skill("problem_solving", 0.8)
+    task_agent1.learn_skill("data_analysis", 0.7)
+    task_agent1.learn_skill("planning", 0.9)
+    
+    task_agent2 = TaskAgent("Analyzer")
+    task_agent2.earn_tokens(80, "Initial allocation")
+    task_agent2.learn_skill("research", 0.9)
+    task_agent2.learn_skill("critical_thinking", 0.8)
+    task_agent2.learn_skill("data_visualization", 0.7)
+    
+    # Create social agents
+    social_agent1 = SocialAgent("Networker")
+    social_agent1.earn_tokens(120, "Initial allocation")
+    social_agent1.learn_skill("communication", 0.9)
+    social_agent1.learn_skill("empathy", 0.8)
+    social_agent1.learn_skill("negotiation", 0.7)
+    
+    social_agent2 = SocialAgent("Diplomat")
+    social_agent2.earn_tokens(90, "Initial allocation")
+    social_agent2.learn_skill("conflict_resolution", 0.9)
+    social_agent2.learn_skill("persuasion", 0.8)
+    social_agent2.learn_skill("leadership", 0.7)
+    
+    # Create conversational agent
+    cua = ConversationalUserAgent("Assistant")
+    cua.earn_tokens(50, "Initial allocation")
+    
+    # Register agents with environment
+    env.register_agent(task_agent1)
+    env.register_agent(task_agent2)
+    env.register_agent(social_agent1)
+    env.register_agent(social_agent2)
+    env.register_agent(cua)
+    
+    # Create a collective
+    collective = AgentCollective("Dream Team")
+    collective.add_agent(task_agent1, "coordinator")
+    collective.add_agent(task_agent2, "analyst")
+    collective.add_agent(social_agent1, "creator")
+    collective.add_agent(social_agent2, "evaluator")
+    
+    # Register collective with environment
+    env.register_collective(collective)
+    
+    # Create goals for agents
+    task_agent1.add_goal("Complete 5 high-priority tasks", 0.8)
+    task_agent2.add_goal("Analyze market trends for Q3", 0.7)
+    social_agent1.add_goal("Expand network by 10 connections", 0.6)
+    social_agent2.add_goal("Resolve team conflict", 0.9)
+    
+    # Add some reflections
+    reflect("Starting a new day with clear objectives. My primary focus is on task coordination and ensuring efficient resource allocation.", 
+           "goal_setting", {"agent_id": task_agent1.id})
+    
+    reflect("I've been analyzing patterns in recent data and noticed some interesting correlations that could inform our strategy.", 
+           "learning", {"agent_id": task_agent2.id})
+    
+    reflect("Building relationships requires active listening and genuine interest in others. Today I practiced these skills with good results.", 
+           "social_interaction", {"agent_id": social_agent1.id})
+    
+    reflect("Successfully mediated a disagreement by focusing on shared goals rather than points of contention.", 
+           "problem_solving", {"agent_id": social_agent2.id})
+    
+    # Add some portfolio items
+    update_portfolio("Developed a new task prioritization algorithm that improved team efficiency by 15%", 
+                    "achievement", {"agent_id": task_agent1.id})
+    
+    update_portfolio("Created comprehensive market analysis report with actionable insights", 
+                    "project", {"agent_id": task_agent2.id})
+    
+    update_portfolio("Facilitated introduction between key stakeholders that led to new partnership", 
+                    "achievement", {"agent_id": social_agent1.id})
+    
+    update_portfolio("Resolved critical team conflict that was blocking progress on key initiative", 
+                    "achievement", {"agent_id": social_agent2.id})
+    
+    logger.info(f"Demo environment created with {len(env.agents)} agents and {len(env.collectives)} collectives")
+    return env
+
+def create_virtual_world(env: Environment) -> VirtualWorld:
+    """Create a virtual world with locations and objects."""
+    logger.info("Creating virtual world")
+    
+    # Initialize virtual world
+    world = VirtualWorld("AnnabanOS World", (100.0, 100.0))
+    
+    # Add agents to virtual world
+    for agent_id, agent in env.agents.items():
+        x = random.uniform(10.0, 90.0)
+        y = random.uniform(10.0, 90.0)
+        
+        icon = "🧠"  # Default icon
+        if isinstance(agent, TaskAgent):
+            icon = "📊"
+        elif isinstance(agent, SocialAgent):
+            icon = "🤝"
+        elif isinstance(agent, ConversationalUserAgent):
+            icon = "💬"
+        
+        world.add_agent(agent_id, (x, y), {"icon": icon})
+    
+    # Add locations to virtual world
+    world.add_location(VirtualLocation("Task Hub", (30.0, 30.0), 15.0, {"type": "work"}))
+    world.add_location(VirtualLocation("Social Center", (70.0, 50.0), 20.0, {"type": "social"}))
+    world.add_location(VirtualLocation("Learning Zone", (50.0, 80.0), 10.0, {"type": "education"}))
+    world.add_location(VirtualLocation("Marketplace", (20.0, 70.0), 12.0, {"type": "economic"}))
+    world.add_location(VirtualLocation("Reflection Garden", (80.0, 20.0), 8.0, {"type": "reflection"}))
+    
+    # Add objects to virtual world
+    world.add_object(VirtualObject("Knowledge Base", (25.0, 25.0), {"type": "resource", "value": 10}))
+    world.add_object(VirtualObject("Communication Hub", (75.0, 45.0), {"type": "tool", "value": 15}))
+    world.add_object(VirtualObject("Token Vault", (50.0, 50.0), {"type": "economic", "value": 20}))
+    world.add_object(VirtualObject("Skill Tree", (55.0, 85.0), {"type": "education", "value": 25}))
+    world.add_object(VirtualObject("Meditation Pool", (85.0, 15.0), {"type": "reflection", "value": 15}))
+    
+    logger.info(f"Virtual world created with {len(world.locations)} locations and {len(world.objects)} objects")
+    return world
+
+def setup_token_economy() -> Tuple[TokenManager, TokenMarketplace]:
+    """Set up the token economy and marketplace."""
+    logger.info("Setting up token economy")
+    
+    # Initialize token manager
+    token_manager = TokenManager()
+    
+    # Initialize marketplace
+    marketplace = TokenMarketplace(token_manager)
+    
+    logger.info("Token economy initialized")
+    return token_manager, marketplace
+
+def create_marketplace_listings(marketplace: TokenMarketplace, env: Environment) -> None:
+    """Create some initial marketplace listings."""
+    logger.info("Creating marketplace listings")
+    
+    # Find task agents
+    task_agents = [agent for agent in env.agents.values() if isinstance(agent, TaskAgent)]
+    
+    # Find social agents
+    social_agents = [agent for agent in env.agents.values() if isinstance(agent, SocialAgent)]
+    
+    # Create listings for task agents
+    if task_agents:
+        marketplace.create_listing(
+            task_agents[0].id,
+            "Problem-Solving Service",
+            "Expert problem-solving assistance for complex challenges",
+            25.0,
+            "task_service",
+            {"skill_level": 0.8, "duration": "1 day"}
+        )
+        
+        if len(task_agents) > 1:
+            marketplace.create_listing(
+                task_agents[1].id,
+                "Data Analysis Report",
+                "Comprehensive data analysis with visualizations and insights",
+                40.0,
+                "information",
+                {"skill_level": 0.7, "format": "PDF"}
+            )
+    
+    # Create listings for social agents
+    if social_agents:
+        marketplace.create_listing(
+            social_agents[0].id,
+            "Network Introduction",
+            "Introduction to key agents in my network",
+            15.0,
+            "social_service",
+            {"connections": 5, "quality": "high"}
+        )
+        
+        if len(social_agents) > 1:
+            marketplace.create_listing(
+                social_agents[1].id,
+                "Conflict Resolution",
+                "Professional mediation and conflict resolution services",
+                35.0,
+                "social_service",
+                {"skill_level": 0.9, "success_rate": 0.95}
+            )
+    
+    logger.info(f"Created {len(marketplace.get_active_listings())} marketplace listings")
+
+def run_simulation(env: Environment, world: VirtualWorld, token_manager: TokenManager, 
+                  marketplace: TokenMarketplace, num_cycles: int = 5) -> None:
+    """Run a simulation of the AnnabanOS system."""
+    logger.info(f"Starting simulation for {num_cycles} cycles")
+    
+    for cycle in range(1, num_cycles + 1):
+        logger.info(f"Simulation cycle {cycle}/{num_cycles}")
+        
+        # 1. Agent actions
+        for agent_id, agent in env.agents.items():
+            # Random chance to move in virtual world
+            if random.random() < 0.7:  # 70% chance to move
+                new_pos = world.get_random_position()
+                world.move_agent(agent_id, new_pos)
+                
+                # Check if agent is at a location
+                location = world.get_agent_location(agent_id)
+                if location:
+                    logger.info(f"Agent {agent.name} moved to location {location.name}")
+                    
+                    # Add reflection about location
+                    if random.random() < 0.5:  # 50% chance to reflect
+                        reflect(f"Visited {location.name} today. This location is good for {location.get_property('type', 'general')} activities.",
+                               "general", {"agent_id": agent_id, "location": location.name})
+            
+            # Random chance to interact with nearby agents
+            nearby_agents = world.get_agents_near(world.virtual_agents[agent_id].position, 10.0)
+            nearby_agents.remove(agent_id)  # Remove self
+            
+            if nearby_agents:
+                other_agent_id = random.choice(nearby_agents)
+                other_agent = env.agents[other_agent_id]
+                
+                # Send a message
+                message = f"Hello {other_agent.name}, I noticed we're both at {world.get_agent_location(agent_id).name if world.get_agent_location(agent_id) else 'this location'}."
+                env.send_message(agent_id, other_agent_id, message)
+                
+                # Random chance for token transfer
+                if random.random() < 0.3:  # 30% chance to transfer tokens
+                    amount = random.uniform(1.0, 5.0)
+                    token_manager.transfer_tokens(agent_id, other_agent_id, amount, "Friendly interaction")
+        
+        # 2. Collective tasks
+        for collective_id, collective in env.collectives.items():
+            # Random chance to create and execute a task
+            if random.random() < 0.6:  # 60% chance to create task
+                task_descriptions = [
+                    "Analyze recent market trends and provide recommendations",
+                    "Develop a communication strategy for the new initiative",
+                    "Research emerging technologies in our field",
+                    "Create a conflict resolution framework for team disputes",
+                    "Design a new token allocation algorithm"
+                ]
+                
+                task_description = random.choice(task_descriptions)
+                difficulty = random.uniform(0.3, 0.8)
+                reward = 20.0 + difficulty * 30.0  # 20-50 tokens based on difficulty
+                
+                # Select 2-3 random roles
+                all_roles = list(collective.roles.keys())
+                num_roles = random.randint(2, min(3, len(all_roles)))
+                required_roles = random.sample(all_roles, num_roles)
+                
+                # Create task
+                task = collective.create_task(
+                    task_description,
+                    difficulty,
+                    reward,
+                    required_roles
+                )
+                
+                # Assign roles
+                collective.assign_task_roles(task.id)
+                
+                # Execute task
+                result = collective.execute_task(task.id)
+                
+                if result["success"]:
+                    logger.info(f"Collective {collective.name} completed task: {task_description}")
+                    
+                    # Add to portfolio
+                    update_portfolio(f"As part of {collective.name}, completed task: {task_description}",
+                                    "achievement", {"collective": collective.name, "task": task_description})
+                else:
+                    logger.info(f"Collective {collective.name} failed task: {task_description}")
+        
+        # 3. Marketplace transactions
+        active_listings = marketplace.get_active_listings()
+        if active_listings and len(env.agents) >= 2:
+            # Random chance for marketplace transaction
+            if random.random() < 0.4:  # 40% chance for transaction
+                # Select random listing
+                listing = random.choice(active_listings)
+                
+                # Select random buyer (not the seller)
+                potential_buyers = [agent_id for agent_id in env.agents.keys() if agent_id != listing["seller_id"]]
+                if potential_buyers:
+                    buyer_id = random.choice(potential_buyers)
+                    
+                    # Check if buyer has enough tokens
+                    buyer_balance = token_manager.get_balance(buyer_id)
+                    if buyer_balance >= listing["price"]:
+                        # Purchase listing
+                        success = marketplace.purchase(listing["id"], buyer_id)
+                        
+                        if success:
+                            buyer = env.agents[buyer_id]
+                            seller = env.agents[listing["seller_id"]]
+                            logger.info(f"Agent {buyer.name} purchased {listing['title']} from {seller.name}")
+        
+        # 4. Apply interest to staked tokens
+        if cycle % 2 == 0:  # Every other cycle
+            token_manager.apply_interest()
+        
+        # 5. Generate some reflections and portfolio items
+        if random.random() < 0.7:  # 70% chance for reflection
+            agent_id = random.choice(list(env.agents.keys()))
+            agent = env.agents[agent_id]
+            
+            reflection_templates = [
+                "I've been thinking about how to improve my {skill} skills. I believe focused practice and learning from others will help.",
+                "Today I made progress on my goal to {goal}. I'm {progress}% of the way there.",
+                "Working with {other_agent} has been insightful. Their approach to {topic} is different from mine in interesting ways.",
+                "I've noticed that {observation} about the environment. This could be useful for future tasks.",
+                "My strategy for earning and managing tokens has been {strategy}. I need to adjust by {adjustment}."
+            ]
+            
+            template = random.choice(reflection_templates)
+            
+            # Fill in template
+            reflection = template.format(
+                skill=random.choice(["problem-solving", "communication", "analysis", "planning", "negotiation"]),
+                goal="improve efficiency" if isinstance(agent, TaskAgent) else "build stronger relationships",
+                progress=random.randint(20, 80),
+                other_agent=random.choice([a.name for a in env.agents.values() if a.id != agent_id]),
+                topic=random.choice(["task allocation", "token economy", "skill development", "goal setting"]),
+                observation=random.choice(["resources are becoming more scarce", "collaboration leads to better outcomes", "specialization is valuable"]),
+                strategy=random.choice(["conservative", "aggressive", "balanced"]),
+                adjustment=random.choice(["taking more calculated risks", "being more careful with spending", "diversifying my activities"])
+            )
+            
+            # Add reflection
+            reflect(reflection, random.choice(["learning", "goal_setting", "social_interaction", "problem_solving"]), 
+                   {"agent_id": agent_id, "cycle": cycle})
+    
+    logger.info("Simulation completed")
+
+def main():
+    """Main function to run the AnnabanOS Enhanced system."""
+    parser = argparse.ArgumentParser(description="AnnabanOS Enhanced System")
+    parser.add_argument("--config", type=str, help="Path to configuration file")
+    parser.add_argument("--cycles", type=int, default=5, help="Number of simulation cycles")
+    parser.add_argument("--scenarios", type=str, default="tasks/task_scenarios.json", help="Path to task scenarios file")
+    args = parser.parse_args()
+    
+    # Load configuration if provided
+    if args.config:
+        config.load_from_file(args.config)
+    
+    logger.info("Starting AnnabanOS Enhanced")
+    
+    # Load task scenarios
+    scenarios = load_task_scenarios(args.scenarios)
+    logger.info(f"Loaded {len(scenarios)} task scenarios")
+    
+    # Create environment with agents and collectives
+    env = create_demo_environment()
+    
+    # Create virtual world
+    world = create_virtual_world(env)
+    
+    # Set up token economy
+    token_manager, marketplace = setup_token_economy()
+    
+    # Create marketplace listings
+    create_marketplace_listings(marketplace, env)
+    
+    # Run simulation
+    run_simulation(env, world, token_manager, marketplace, args.cycles)
+    
+    logger.info("AnnabanOS Enhanced completed successfully")
+
+if __name__ == "__main__":
+    main()
