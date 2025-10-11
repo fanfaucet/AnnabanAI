@@ -99,6 +99,18 @@ python main.py --cycles 5
 
 Or use the web dashboard to run simulation cycles interactively.
 
+## Documentation
+
+Comprehensive documentation for public APIs, functions, and components is available in the `docs/` directory:
+
+- [Docs Overview](docs/README.md)
+- [Usage](docs/usage.md)
+- [API Reference](docs/api.md)
+- [AnnabanAI Components](docs/annabanai.md)
+- [Agents](docs/agents.md)
+- [Environment & Virtual World](docs/environment.md)
+- [Token Economy](docs/token_economy.md)
+
 ## Configuration
 
 The system can be configured using the `config/config.yaml` file. See the comments in the file for available options.
