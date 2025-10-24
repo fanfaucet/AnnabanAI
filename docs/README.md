@@ -16,3 +16,8 @@ AnnabanOS Enhanced is a multi-agent framework with a virtual world, token econom
 ## Quickstart
 - CLI: see [Usage](./usage.md)
 - Programmatic: see [API Reference](./api.md)
+
+
+- [Thank You Note](./thank-you-note/index.html)
+
+
