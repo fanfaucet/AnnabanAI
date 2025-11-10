@@ -1,0 +1,58 @@
+# Simulation Data Input and Projections (2025-2035)
+
+This document compiles the key data points and projections from authoritative sources (IEA, NGFS, IPCC) to serve as the initial conditions and boundary constraints for the AnnabanAI forecasting model.
+
+## 1. Initial Conditions (2025 Baseline)
+
+| Indicator | Value | Source/Context |
+| :--- | :--- | :--- |
+| **Global GDP Growth Rate** | ~3.0% | Assumed baseline for 2025 (pre-policy shock). |
+| **Global Carbon Price (Average)** | ~$20/ton CO2e | Based on current fragmented market mechanisms. |
+| **Green Technology Investment** | ~$700 Billion | IEA 2023 baseline, set to triple by 2035. |
+| **Climate-Related Disaster Costs** | ~$150 Billion/year | Estimated global average (historical context). |
+
+## 2. Scenario-Specific Boundary Constraints (2035 Targets)
+
+The model will be constrained to achieve the following target ranges by 2035 for each scenario, reflecting the policy intensity:
+
+### Scenario 1: Ambitious Global Alignment (1.5°C Pathway)
+
+| Indicator | 2035 Target Range | Rationale (Source) |
+| :--- | :--- | :--- |
+| **Global GDP Growth Rate** | 2.0% - 3.5% | Initial drag from rapid transition, followed by growth from green investment (NGFS, IEA). |
+| **Global Carbon Price** | $150 - $250/ton CO2e | Required for 1.5°C alignment (IPCC, NGFS high-ambition scenarios). |
+| **Green Technology Investment** | > $2.5 Trillion | Exceeding IEA's forecast of $2 Trillion due to coordinated investment. |
+| **Energy Poverty Rate** | Reduced by 15% - 25% | Coordinated policy includes targeted energy access programs. |
+| **Climate-Related Disaster Costs** | Reduced by 10% - 20% | Mitigation efforts begin to curb physical risks. |
+| **Global Income Inequality (Gini)** | Stable to Slightly Reduced | Coordinated global action minimizes regional disparities. |
+
+### Scenario 2: Fragmented National Action (Current Trajectory)
+
+| Indicator | 2035 Target Range | Rationale (Source) |
+| :--- | :--- | :--- |
+| **Global GDP Growth Rate** | 2.5% - 3.0% | Moderate growth, offset by rising climate costs (NGFS Current Policies). |
+| **Global Carbon Price** | $50 - $80/ton CO2e | Patchwork of regional pricing; insufficient global signal (NGFS). |
+| **Green Technology Investment** | $1.5 - $2.0 Trillion | Meeting IEA's base forecast, but not exceeding it. |
+| **Energy Poverty Rate** | Stable to Slightly Increased | Rising energy costs in uncoordinated markets. |
+| **Climate-Related Disaster Costs** | Increased by 15% - 30% | Insufficient mitigation leads to rising physical risks. |
+| **Global Income Inequality (Gini)** | Increased by 5% - 10% | Uneven climate action exacerbates regional and national wealth gaps. |
+
+### Scenario 3: Technology-First Adaptation (Delayed Mitigation)
+
+| Indicator | 2035 Target Range | Rationale (Source) |
+| :--- | :--- | :--- |
+| **Global GDP Growth Rate** | 3.0% - 4.0% | Short-term boost from deregulation and focus on immediate growth. |
+| **Global Carbon Price** | < $20/ton CO2e | Minimal new pricing mechanisms. |
+| **Green Technology Investment** | Focused on Adaptation/Geoengineering | Investment shifts from mitigation to resilience and R&D. |
+| **Energy Poverty Rate** | Stable | Focus on energy security keeps prices stable for now. |
+| **Climate-Related Disaster Costs** | Increased by 30% - 50% | Highest physical risk due to delayed mitigation and reliance on adaptation. |
+| **Global Income Inequality (Gini)** | Stable to Slightly Increased | High-cost adaptation technologies benefit wealthier nations/groups first. |
+
+## 3. Modeling Methodology Notes
+
+The AnnabanAI model will use these constraints to drive a dynamic simulation, incorporating feedback loops between:
+1.  **Policy Stringency** (Carbon Price) and **Economic Output** (GDP).
+2.  **Green Investment** and **Decarbonization Rate**.
+3.  **Climate-Related Disaster Costs** and **GDP Drag**.
+
+The model will be implemented using a Python-based system dynamics approach to simulat
