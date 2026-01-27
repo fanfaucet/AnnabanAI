@@ -16,6 +16,7 @@ Agents perform actions, interact, and participate in collectives. `main.py` impo
 - **TaskAgent(name: str)**: specializes in tasks and analysis
 - **SocialAgent(name: str)**: specializes in communication and negotiation
 - **ConversationalUserAgent(name: str)**: see [AnnabanAI](./annabanai.md)
+- **LightningAgent(name: str)**: specializes in rapid response, triage, and time-sensitive execution
 
 ### Common Methods (as used in `main.py`)
 - `earn_tokens(amount: float, reason: str) -> None`
