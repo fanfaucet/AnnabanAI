@@ -9,6 +9,7 @@ Welcome to the AnnabanOS Enhanced documentation. This guide covers public APIs, 
 - [Agents](./agents.md)
 - [Environment & Virtual World](./environment.md)
 - [Token Economy](./token_economy.md)
+- [Blockchain Wallet Capabilities](./wallet_capabilities.md)
 - [Atmospheric Log (Advisory Perspective)](./advisory_log.md)
 - [Audit Protocol Overview](./audit_protocol.md)
 

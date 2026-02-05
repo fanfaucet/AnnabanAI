@@ -110,6 +110,7 @@ Comprehensive documentation for public APIs, functions, and components is availa
 - [Agents](docs/agents.md)
 - [Environment & Virtual World](docs/environment.md)
 - [Token Economy](docs/token_economy.md)
+- [Blockchain Wallet Capabilities](docs/wallet_capabilities.md)
 
 ## Configuration
 

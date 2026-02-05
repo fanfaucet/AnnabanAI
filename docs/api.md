@@ -5,6 +5,7 @@ This reference documents public functions exposed in `main.py` and the core comp
 - Agents: see [Agents](./agents.md)
 - Environment & World: see [Environment](./environment.md)
 - Token Economy: see [Token Economy](./token_economy.md)
+- Wallets: see [Blockchain Wallet Capabilities](./wallet_capabilities.md)
 - AnnabanAI: see [AnnabanAI Components](./annabanai.md)
 
 ## `load_task_scenarios(file_path: str) -> List[Dict[str, Any]]`
