@@ -10,6 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import datetime
 import hashlib
+import math
 import secrets
 from typing import Dict, List, Optional
 
@@ -81,27 +82,36 @@ class BlockchainWalletService:
         asset: Optional[str] = None,
     ) -> WalletTransaction:
         """Transfer funds between wallets and record on the local ledger."""
-        if amount <= 0:
+        try:
+            amount_value = float(amount)
+        except (TypeError, ValueError) as exc:
+            raise ValueError("Transfer amount must be a finite number") from exc
+
+        if not math.isfinite(amount_value):
+            raise ValueError("Transfer amount must be a finite number")
+        if amount_value <= 0:
             raise ValueError("Transfer amount must be positive")
 
         if sender_address not in self.balances:
             raise ValueError("Unknown sender address")
         if recipient_address not in self.balances:
             raise ValueError("Unknown recipient address")
-        if self.balances[sender_address] < amount:
+        if self.balances[sender_address] < amount_value:
             raise ValueError("Insufficient funds")
 
-        self.balances[sender_address] -= amount
-        self.balances[recipient_address] += amount
+        self.balances[sender_address] -= amount_value
+        self.balances[recipient_address] += amount_value
 
-        payload = f"{sender_address}:{recipient_address}:{amount}:{datetime.utcnow().isoformat()}:{memo}"
+        payload = (
+            f"{sender_address}:{recipient_address}:{amount_value}:{datetime.utcnow().isoformat()}:{memo}"
+        )
         tx_id = "tx_" + hashlib.sha256(payload.encode("utf-8")).hexdigest()[:20]
 
         tx = WalletTransaction(
             tx_id=tx_id,
             sender_address=sender_address,
             recipient_address=recipient_address,
-            amount=float(amount),
+            amount=amount_value,
             asset=asset or self.default_asset,
             memo=memo,
         )
