@@ -75,7 +75,7 @@ class AnnabanLLM:
         # Register oversight notification handler
         self.governance_module.register_notification_callback(self._handle_oversight_notification)
         
-        print(f"AnnabanAI ({self.config.get('annabanai_model_identity', 'GPT-5.2')}) initialized with provider: {provider.value}")
+        print(f"AnnabanAI ({self.config.get('annabanai_model_identity', 'ChatGPT')}) initialized with provider: {provider.value}")
     
     def _load_config(self, config_path: Optional[str]) -> Dict[str, Any]:
         """
@@ -102,7 +102,7 @@ class AnnabanLLM:
             "log_interactions": True,
             "human_oversight_threshold": 0.8,
             "memory_retention_days": 90,
-            "annabanai_model_identity": "GPT-5.2"
+            "annabanai_model_identity": "ChatGPT"
         }
     
     def _handle_oversight_notification(self, request):

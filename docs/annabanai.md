@@ -2,6 +2,8 @@
 
 AnnabanAI provides the reflection and conversational capabilities in AnnabanOS Enhanced. The main pieces used in `main.py` are imported from `annabanai`:
 
+AnnabanAI is the conversational user agent in this system, represented by `ConversationalUserAgent` and modeled as ChatGPT behavior in user-facing interactions.
+
 - `reflect` and `update_portfolio`: record reflections and achievements
 - `EchoLoop`: structured reflection system
 - `ConversationalUserAgent`: an agent that can converse with users
@@ -62,4 +64,4 @@ Manus works with AnnabanAI through the same synchronization bridge used for Anna
 python Main.py --interactive --sync-with-manus --manus-script "main.py" --annaban-cycles 1
 ```
 
-AnnabanAI identifies as GPT-5.2 in runtime metadata (`annabanai_model_identity`) unless overridden in config.
+AnnabanAI identifies as ChatGPT in runtime metadata (`annabanai_model_identity`) unless overridden in config.
