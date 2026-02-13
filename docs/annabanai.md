@@ -44,3 +44,12 @@ cua.earn_tokens(50, "Initial allocation")
 `main.py` uses these functions and classes to seed reflections and portfolio entries during environment setup and simulation cycles. See:
 - `create_demo_environment()` for initial reflections and portfolio updates
 - `run_simulation()` for periodic reflections
+
+## Running AnnabanOS + AnnabanAI Together
+Use `Main.py` with sync flags to run AnnabanOS (Annaban) cycles first and pass recent AnnabanOS output into the AnnabanAI prompt context:
+
+```bash
+python Main.py --interactive --sync-with-annabanos --annaban-cycles 1
+```
+
+In this mode, AnnabanAI receives a structured context payload (`annabanos_sync`, command, and recent output lines) before response generation. Backward-compatible `annaban_*` keys are also included.

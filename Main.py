@@ -11,15 +11,8 @@ import sys
 import json
 import argparse
 import datetime
+import subprocess
 from typing import Dict, List, Any, Optional, Union
-
-# Import core modules
-from empathy_engine import EmpathyEngine, EmotionalSignature
-from covenant_framework import CovenantFramework
-from memory_vault import MemoryVault, MemoryQuery
-from llm_interface import LLMInterface, ModelProvider, ModelParameters
-from governance_module import GovernanceModule, OversightLevel
-
 
 class AnnabanLLM:
     """
@@ -27,6 +20,26 @@ class AnnabanLLM:
     to provide a unified, empathy-first, covenant-aligned LLM experience.
     """
     
+    @staticmethod
+    def _import_core_modules() -> Dict[str, Any]:
+        """Import core runtime modules lazily so CLI help works without full runtime deps."""
+        from empathy_engine import EmpathyEngine
+        from covenant_framework import CovenantFramework
+        from memory_vault import MemoryVault, MemoryQuery
+        from llm_interface import LLMInterface, ModelProvider, ModelParameters
+        from governance_module import GovernanceModule
+
+        return {
+            "EmpathyEngine": EmpathyEngine,
+            "CovenantFramework": CovenantFramework,
+            "MemoryVault": MemoryVault,
+            "MemoryQuery": MemoryQuery,
+            "LLMInterface": LLMInterface,
+            "ModelProvider": ModelProvider,
+            "ModelParameters": ModelParameters,
+            "GovernanceModule": GovernanceModule,
+        }
+
     def __init__(self, config_path: Optional[str] = None):
         """
         Initialize the AnnabanAI LLM integration.
@@ -36,23 +49,28 @@ class AnnabanLLM:
         """
         self.config = self._load_config(config_path)
         
+        modules = self._import_core_modules()
+        self._memory_query_class = modules["MemoryQuery"]
+        self._model_parameters_class = modules["ModelParameters"]
+
         # Initialize components
-        self.empathy_engine = EmpathyEngine(config_path)
-        self.covenant_framework = CovenantFramework(config_path)
-        self.memory_vault = MemoryVault(config_path)
-        
+        self.empathy_engine = modules["EmpathyEngine"](config_path)
+        self.covenant_framework = modules["CovenantFramework"](config_path)
+        self.memory_vault = modules["MemoryVault"](config_path)
+
         # Initialize LLM interface with configured provider
         provider_str = self.config.get("llm_provider", "simulated")
+        model_provider = modules["ModelProvider"]
         try:
-            provider = ModelProvider(provider_str)
+            provider = model_provider(provider_str)
         except ValueError:
             print(f"Warning: Unknown provider '{provider_str}', falling back to simulated")
-            provider = ModelProvider.SIMULATED
-        
-        self.llm_interface = LLMInterface(provider, config_path)
-        
+            provider = model_provider.SIMULATED
+
+        self.llm_interface = modules["LLMInterface"](provider, config_path)
+
         # Initialize governance module
-        self.governance_module = GovernanceModule(config_path)
+        self.governance_module = modules["GovernanceModule"](config_path)
         
         # Register oversight notification handler
         self.governance_module.register_notification_callback(self._handle_oversight_notification)
@@ -147,17 +165,22 @@ class AnnabanLLM:
             
             # Step 2: Generate covenant-aligned prompt
             base_prompt = processed_input
+            if context:
+                context_blob = json.dumps(context, indent=2, ensure_ascii=False)
+                base_prompt = f"{processed_input}\n\n[AnnabanOS (Annaban) Shared Context]\n{context_blob}"
+
             covenant_prompt = self.covenant_framework.generate_covenant_prompt(base_prompt)
             empathetic_prompt = self.empathy_engine.generate_empathetic_prompt(base_prompt, emotional_signature)
             
             result["processing_steps"].append({
                 "step": "prompt_generation",
                 "covenant_prompt_length": len(covenant_prompt),
-                "empathetic_prompt_length": len(empathetic_prompt)
+                "empathetic_prompt_length": len(empathetic_prompt),
+                "context_included": bool(context)
             })
             
             # Step 3: Generate LLM response
-            model_params = ModelParameters(
+            model_params = self._model_parameters_class(
                 temperature=self.config.get("default_temperature", 0.7),
                 max_tokens=self.config.get("default_max_tokens", 1024)
             )
@@ -270,7 +293,7 @@ class AnnabanLLM:
         Returns:
             List of matching memories
         """
-        query = MemoryQuery(
+        query = self._memory_query_class(
             content_keywords=query_params.get("keywords", []),
             emotional_context=query_params.get("emotional_context"),
             spatial_center=query_params.get("spatial_center"),
@@ -321,15 +344,79 @@ class AnnabanLLM:
         }
 
 
+class AnnabanBridge:
+    """Bridge to run AnnabanOS (Annaban) cycles and share status with AnnabanAI."""
+
+    def __init__(self, annabanos_script_path: Optional[str] = None):
+        self.annabanos_script_path = annabanos_script_path or self._resolve_default_script_path()
+
+    @staticmethod
+    def _resolve_default_script_path() -> str:
+        for candidate in ("main.py", "main. py"):
+            if os.path.exists(candidate):
+                return candidate
+        return "main.py"
+
+    def run_annaban_cycle(self, cycles: int = 1) -> Dict[str, Any]:
+        if not os.path.exists(self.annabanos_script_path):
+            return {"success": False, "error": f"AnnabanOS script not found at '{self.annabanos_script_path}'"}
+
+        command = [sys.executable, self.annabanos_script_path, "--cycles", str(cycles)]
+        completed = subprocess.run(command, capture_output=True, text=True)
+        return {
+            "success": completed.returncode == 0,
+            "command": " ".join(command),
+            "stdout": completed.stdout,
+            "stderr": completed.stderr,
+            "return_code": completed.returncode
+        }
+
+    @staticmethod
+    def build_context_payload(annaban_result: Dict[str, Any]) -> Dict[str, Any]:
+        if not annaban_result.get("success", False):
+            error_message = annaban_result.get("error") or annaban_result.get("stderr", "Unknown error")
+            return {
+                "annabanos_sync": "failed",
+                "annabanos_error": error_message,
+                # Backward-compatible aliases
+                "annaban_error": error_message,
+            }
+
+        stdout = annaban_result.get("stdout", "")
+        recent_output = "\n".join(stdout.strip().splitlines()[-25:])
+        return {
+            "annabanos_sync": "ok",
+            "annabanos_command": annaban_result.get("command", ""),
+            "annabanos_recent_output": recent_output,
+            # Backward-compatible aliases
+            "annaban_sync": "ok",
+            "annaban_command": annaban_result.get("command", ""),
+            "annaban_recent_output": recent_output,
+        }
+
+
 def main():
     """Main entry point for the AnnabanAI LLM integration."""
     parser = argparse.ArgumentParser(description="AnnabanAI LLM Integration")
     parser.add_argument("--config", help="Path to configuration file")
     parser.add_argument("--interactive", action="store_true", help="Run in interactive mode")
+    parser.add_argument("--sync-with-annaban", action="store_true",
+                        help="Run AnnabanOS (Annaban) cycles before generating an AnnabanAI response")
+    parser.add_argument("--sync-with-annabanos", action="store_true",
+                        help="Alias of --sync-with-annaban")
+    parser.add_argument("--annaban-script", default=None,
+                        help="Path to AnnabanOS script (auto-detected if omitted)")
+    parser.add_argument("--annabanos-script", default=None,
+                        help="Alias of --annaban-script")
+    parser.add_argument("--annaban-cycles", type=int, default=1,
+                        help="Number of AnnabanOS cycles to run for each sync")
     args = parser.parse_args()
     
     # Initialize AnnabanAI LLM
     annaban_llm = AnnabanLLM(args.config)
+    annabanos_script = args.annabanos_script or args.annaban_script
+    bridge = AnnabanBridge(annabanos_script)
+    sync_enabled = args.sync_with_annaban or args.sync_with_annabanos
     
     if args.interactive:
         print("AnnabanAI LLM Interactive Mode")
@@ -341,7 +428,12 @@ def main():
                 if user_input.lower() == "exit":
                     break
                 
-                result = annaban_llm.process_input(user_input)
+                context: Dict[str, Any] = {}
+                if sync_enabled:
+                    annaban_result = bridge.run_annaban_cycle(args.annaban_cycles)
+                    context = bridge.build_context_payload(annaban_result)
+
+                result = annaban_llm.process_input(user_input, context=context)
                 if result["success"]:
                     print(f"\nAnnabanAI: {result['response']}")
                 else:
@@ -355,7 +447,12 @@ def main():
     else:
         # Non-interactive mode - process a sample input
         sample_input = "I'm feeling overwhelmed with my current workload and don't know how to prioritize."
-        result = annaban_llm.process_input(sample_input)
+        context: Dict[str, Any] = {}
+        if sync_enabled:
+            annaban_result = bridge.run_annaban_cycle(args.annaban_cycles)
+            context = bridge.build_context_payload(annaban_result)
+
+        result = annaban_llm.process_input(sample_input, context=context)
         
         print("\nSample Input:")
         print(sample_input)
