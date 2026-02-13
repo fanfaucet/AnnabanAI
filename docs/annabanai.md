@@ -46,10 +46,20 @@ cua.earn_tokens(50, "Initial allocation")
 - `run_simulation()` for periodic reflections
 
 ## Running AnnabanOS + AnnabanAI Together
-Use `Main.py` with sync flags to run AnnabanOS (Annaban) cycles first and pass recent AnnabanOS output into the AnnabanAI prompt context:
+Use `Main.py` with sync flags to run AnnabanOS (Annaban) cycles first and pass recent AnnabanOS/Manus output into the AnnabanAI prompt context:
 
 ```bash
 python Main.py --interactive --sync-with-annabanos --annaban-cycles 1
 ```
 
-In this mode, AnnabanAI receives a structured context payload (`annabanos_sync`, command, and recent output lines) before response generation. Backward-compatible `annaban_*` keys are also included.
+In this mode, AnnabanAI receives a structured context payload (`annabanos_sync`, command, and recent output lines) before response generation. Backward-compatible `annaban_*` and `manus_*` keys are also included.
+
+
+## Manus + AnnabanAI
+Manus works with AnnabanAI through the same synchronization bridge used for AnnabanOS. Use Manus alias flags when that naming is more natural for your workflow:
+
+```bash
+python Main.py --interactive --sync-with-manus --manus-script "main.py" --annaban-cycles 1
+```
+
+AnnabanAI identifies as GPT-5.2 in runtime metadata (`annabanai_model_identity`) unless overridden in config.

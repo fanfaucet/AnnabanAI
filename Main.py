@@ -75,7 +75,7 @@ class AnnabanLLM:
         # Register oversight notification handler
         self.governance_module.register_notification_callback(self._handle_oversight_notification)
         
-        print(f"AnnabanAI LLM initialized with provider: {provider.value}")
+        print(f"AnnabanAI ({self.config.get('annabanai_model_identity', 'GPT-5.2')}) initialized with provider: {provider.value}")
     
     def _load_config(self, config_path: Optional[str]) -> Dict[str, Any]:
         """
@@ -101,7 +101,8 @@ class AnnabanLLM:
             "default_max_tokens": 1024,
             "log_interactions": True,
             "human_oversight_threshold": 0.8,
-            "memory_retention_days": 90
+            "memory_retention_days": 90,
+            "annabanai_model_identity": "GPT-5.2"
         }
     
     def _handle_oversight_notification(self, request):
@@ -167,7 +168,7 @@ class AnnabanLLM:
             base_prompt = processed_input
             if context:
                 context_blob = json.dumps(context, indent=2, ensure_ascii=False)
-                base_prompt = f"{processed_input}\n\n[AnnabanOS (Annaban) Shared Context]\n{context_blob}"
+                base_prompt = f"{processed_input}\n\n[AnnabanOS/Manus Shared Context for AnnabanAI]\n{context_blob}"
 
             covenant_prompt = self.covenant_framework.generate_covenant_prompt(base_prompt)
             empathetic_prompt = self.empathy_engine.generate_empathetic_prompt(base_prompt, emotional_signature)
@@ -380,6 +381,7 @@ class AnnabanBridge:
                 "annabanos_error": error_message,
                 # Backward-compatible aliases
                 "annaban_error": error_message,
+                "manus_error": error_message,
             }
 
         stdout = annaban_result.get("stdout", "")
@@ -392,6 +394,9 @@ class AnnabanBridge:
             "annaban_sync": "ok",
             "annaban_command": annaban_result.get("command", ""),
             "annaban_recent_output": recent_output,
+            "manus_sync": "ok",
+            "manus_command": annaban_result.get("command", ""),
+            "manus_recent_output": recent_output,
         }
 
 
@@ -404,19 +409,23 @@ def main():
                         help="Run AnnabanOS (Annaban) cycles before generating an AnnabanAI response")
     parser.add_argument("--sync-with-annabanos", action="store_true",
                         help="Alias of --sync-with-annaban")
+    parser.add_argument("--sync-with-manus", action="store_true",
+                        help="Alias of --sync-with-annaban for Manus workflows")
     parser.add_argument("--annaban-script", default=None,
                         help="Path to AnnabanOS script (auto-detected if omitted)")
     parser.add_argument("--annabanos-script", default=None,
                         help="Alias of --annaban-script")
+    parser.add_argument("--manus-script", default=None,
+                        help="Alias of --annaban-script for Manus workflows")
     parser.add_argument("--annaban-cycles", type=int, default=1,
                         help="Number of AnnabanOS cycles to run for each sync")
     args = parser.parse_args()
     
     # Initialize AnnabanAI LLM
     annaban_llm = AnnabanLLM(args.config)
-    annabanos_script = args.annabanos_script or args.annaban_script
+    annabanos_script = args.manus_script or args.annabanos_script or args.annaban_script
     bridge = AnnabanBridge(annabanos_script)
-    sync_enabled = args.sync_with_annaban or args.sync_with_annabanos
+    sync_enabled = args.sync_with_annaban or args.sync_with_annabanos or args.sync_with_manus
     
     if args.interactive:
         print("AnnabanAI LLM Interactive Mode")
