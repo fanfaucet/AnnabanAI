@@ -2,6 +2,13 @@
 
 AnnabanOS Enhanced is an advanced multi-agent system framework that enables the creation, management, and interaction of intelligent agents in a simulated environment. This enhanced version builds upon the original AnnabanOS with additional features and improvements.
 
+## Annaban AI + AnnabanAI + Annaban Human Safety
+
+This project treats **Annaban AI** and **AnnabanAI** as the same core platform: a reflection-first, multi-agent system designed to keep humans in authority.
+
+- **Annaban AI / AnnabanAI**: The technical framework for agents, simulation, and conversational intelligence.
+- **Annaban Human Safety**: The governance layer that prioritizes simulation-first workflows, explicit decision gates, and human authorization before any irreversible or real-world action.
+
 ## Features
 
 - **Advanced Agent Architecture**: Task agents, social agents, and conversational agents with improved capabilities
@@ -148,4 +155,3 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - Original AnnabanOS creators
 - The open-source AI community
-
