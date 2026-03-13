@@ -1,79 +1,107 @@
-# AnnabanAI + Grok-4 Heavy: Human-Sovereign Multi-Agent Integration
+# AnnabanAI (Prototype)
 
-AnnabanAI is an advanced multi-agent system framework that enables the creation, management, and interaction of intelligent agents in a simulated environment. This version introduces the **Grok-4 Heavy** integration, a paradigm shift towards **Human-Sovereign** AI operations, ensuring that all autonomous actions remain under human oversight while achieving multi-planetary scale performance.
+AnnabanAI is an open-source governance experiment demonstrating **human-sovereign AI oversight**, **multi-agent council simulation**, and **transparent decision logging**.
 
-## Core Philosophy: Truth · Sovereignty · Multi-Planetary
+> This repository is a conceptual prototype only. It does **not** connect to real AI model APIs, blockchain networks, or live financial systems in the current scaffold.
 
-The system is built on the principle that AI should be a tool for human advancement, operating with absolute transparency and adherence to human values.
+## Repository Structure
 
-- **Truth**: Prioritizing factual accuracy and cross-verified reasoning.
-- **Sovereignty**: Ensuring humans maintain the ultimate veto power over AI decisions.
-- **Multi-Planetary**: Architected for the extreme reliability required for Mars operations and beyond.
+```text
+agents/
+  base_agent.py
+  council.py
+  environment.py
+dashboard/
+  app.py
+  metrics.py
+  data_mock.json
+docs/
+  AnnabanAI_Whitepaper_v1.md
+  revision_log.md
+governance/
+  principles.md
+  framework.md
+data/
+  actions_log.json
+  votes_log.json
+  human_veto_events.json
+  value_return_log.json
+README.md
+LICENSE
+requirements.txt
+CONTRIBUTING.md
+.gitignore
+```
 
-## New Architecture: Grok-4 Heavy Integration
+## Quick Start
 
-The latest integration introduces a sophisticated multi-layered processing pipeline:
+1. Clone repository
+   ```bash
+   git clone <your-repo-url>
+   cd AnnabanAI
+   ```
 
-### 1. Input Processing & Orchestration
-- **AnnabanAI Core Orchestrator**: The central brain that receives and parses user intent.
-- **Utility Function $A(t)$**: A dynamic optimization function defined as $A(t) = \sum w_i u_i(t)$, where weights are meticulously balanced for:
-  - **Truth**: Ensuring the highest possible accuracy.
-  - **Human Sovereignty**: Prioritizing human-aligned outcomes.
-  - **Performance**: Optimizing for computational efficiency and speed.
+2. Create environment and install dependencies
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate
+   pip install -r requirements.txt
+   ```
 
-### 2. Grok-4 Heavy Multi-Agent System
-- **Grok-4 Heavy Proxy**: Acts as a high-performance interface to the Grok-4 Heavy model.
-- **Parallel Task Execution**: Multiple specialized agents (Agent 1, Agent 2, Agent 3+) work in tandem to decompose and solve complex problems.
-- **Cross-Evaluation**: Agents review and critique each other's outputs to eliminate hallucinations and errors.
+3. Run a sample governance event (writes JSON logs)
+   ```bash
+   python -m agents.environment
+   ```
 
-### 3. Human Veto Node (Oversight & Approval)
-- A mandatory checkpoint where AI-generated plans are presented for human review.
-- Ensures **99% Human Sovereignty Adherence**, preventing autonomous drift.
+4. Launch transparency dashboard
+   ```bash
+   streamlit run dashboard/app.py
+   ```
 
-### 4. Blockchain Logging & Governance Check
-- **Blockchain Ledger**: Every decision and action is recorded on an immutable audit trail.
-- **Governance Oversight**: Real-time truth-verification and control mechanisms to ensure compliance with established protocols.
+## Human-Sovereignty Features
+- **Council voting:** Proposal scoring by multiple role-based agents.
+- **Human Veto Node:** Required human sign-off for selected decisions.
+- **Audit logs:** JSON logs for actions, votes, and veto events.
+- **Value Return Protocol:** Conceptual routing of benefits to public-good projects.
 
-## Performance Metrics
+## Legacy Vision Context (Preserved)
+The project has historically been described as **AnnabanAI + Grok-4 Heavy: Human-Sovereign Multi-Agent Integration** with a long-term philosophy of:
+- **Truth**
+- **Sovereignty**
+- **Multi-Planetary reliability**
 
+The legacy architecture narrative included:
+1. Input orchestration and utility optimization.
+2. Parallel multi-agent task execution and cross-evaluation.
+3. Human Veto Node approval checkpoints.
+4. Blockchain governance logging.
+
+These items are preserved as historical roadmap context and should be interpreted as aspirational unless explicitly implemented in this prototype branch.
+
+### Historical Performance Targets (from earlier README versions)
 | Metric | Improvement / Status |
 | :--- | :--- |
-| **Truth-Seeking Accuracy** | **+35%** (via Climate Simulation testing) |
-| **Human Sovereignty Adherence** | **99%** (via Human Veto Node) |
-| **Operational Readiness** | **Mars Operations Ready** (Resource Allocation) |
-| **Autonomy Model** | **Scalable Autonomy** (Blockchain-Verified) |
-
-## System Components
-
-1.  **Agents**: Specialized entities including Task, Social, Conversational, and the new Grok-4 integrated agents.
-2.  **Environment**: The shared space for agent interaction, now with enhanced multi-planetary simulation capabilities.
-3.  **Token Economy**: Resource allocation system for managing agent priorities and rewards.
-4.  **Echo Loop**: A structured reflection system for agent self-improvement and learning.
-5.  **Web Interface**: A modern dashboard for real-time monitoring of the multi-agent system and human veto approvals.
-
-## Getting Started
-
-### Prerequisites
-- Python 3.10+
-- Node.js 18+
-- Access to Grok-4 Heavy API Proxy
-
-### Installation
-1.  Clone the repository:
-    ```bash
-    gh repo clone fanfaucet/AnnabanAI
-    cd AnnabanAI
-    ```
-2.  Install dependencies:
-    ```bash
-    pip install -r requirements.txt
-    ```
+| **Truth-Seeking Accuracy** | **+35%** (Climate Simulation testing target) |
+| **Human Sovereignty Adherence** | **99%** (Human Veto Node target) |
+| **Operational Readiness** | **Mars Operations Ready** (long-term objective) |
+| **Autonomy Model** | **Scalable Autonomy** (historical design goal) |
 
 ## Documentation
 - [Architecture Deep Dive](docs/annabanai.md)
 - [Human Veto Protocol](docs/audit_protocol.md)
 - [Blockchain Governance](docs/token_economy.md)
 - [Agent Specifications](docs/agents.md)
+- [Whitepaper v1](docs/AnnabanAI_Whitepaper_v1.md)
+- [Governance Principles](governance/principles.md)
+- [Governance Framework](governance/framework.md)
+- [Revision Log](docs/revision_log.md)
 
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## Next Steps (Suggested Extensions)
+- Add a simple API layer (FastAPI) for proposal submission.
+- Add scenario templates for governance stress-testing.
+- Add unit tests for scoring and consensus logic.
+- Add role-management + signed human approvals.
+- Add dashboard filters for historical review by policy area.
+
+## Attribution
+All project outputs are attributed to human authorship and human governance authority. AI-assisted drafting does not replace human accountability.
