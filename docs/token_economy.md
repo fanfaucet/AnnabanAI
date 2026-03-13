@@ -28,3 +28,7 @@ listing = market.get_active_listings()[0]
 buyer = next(iter(env.agents.keys()))
 success = market.purchase(listing["id"], buyer)
 ```
+
+## Wallet Integration
+
+For blockchain-style wallets and transaction ledgers in simulations, see [Blockchain Wallet Capabilities](./wallet_capabilities.md).
