@@ -1,0 +1,16 @@
+[
+  {
+    "timestamp": "2026-03-13T22:55:15.443034+00:00",
+    "proposal_id": "proposal_demo_001",
+    "guardian": "Designated Human Steward",
+    "human_approved": true,
+    "veto_triggered": false
+  },
+  {
+    "timestamp": "2026-03-13T22:55:23.149982+00:00",
+    "proposal_id": "proposal_demo_001",
+    "guardian": "Designated Human Steward",
+    "human_approved": true,
+    "veto_triggered": false
+  }
+]

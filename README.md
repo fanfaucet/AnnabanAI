@@ -1,152 +1,107 @@
-# AnnabanOS Enhanced
+# AnnabanAI (Prototype)
 
-AnnabanOS Enhanced is an advanced multi-agent system framework that enables the creation, management, and interaction of intelligent agents in a simulated environment. This enhanced version builds upon the original AnnabanOS with additional features and improvements.
+AnnabanAI is an open-source governance experiment demonstrating **human-sovereign AI oversight**, **multi-agent council simulation**, and **transparent decision logging**.
 
-## Features
+> This repository is a conceptual prototype only. It does **not** connect to real AI model APIs, blockchain networks, or live financial systems in the current scaffold.
 
-- **Advanced Agent Architecture**: Task agents, social agents, and conversational agents with improved capabilities
-- **Multi-Agent Collectives**: Groups of agents that can collaborate on complex tasks
-- **Enhanced Token Economy**: Sophisticated token management system with marketplace functionality
-- **Virtual World Environment**: Spatial simulation with locations, objects, and agent movement
-- **Structured Reflection System**: Improved Echo Loop for agent self-reflection and learning
-- **Web Dashboard**: Modern web interface for monitoring and interacting with the system
-- **Configuration System**: Flexible configuration options for customizing system behavior
-- **Logging and Monitoring**: Comprehensive logging and monitoring capabilities
+## Repository Structure
 
-## System Architecture
-
-AnnabanOS Enhanced consists of several key components:
-
-1. **Agents**: Different types of agents with specialized capabilities
-   - Task Agents: Focus on completing tasks and solving problems
-   - Social Agents: Specialize in communication and relationship building
-   - Conversational Agents: Interact with users through natural language
-
-2. **Environment**: The shared space where agents exist and interact
-   - Agent Registry: Keeps track of all agents in the system
-   - Message Passing: Enables communication between agents
-   - Event System: Broadcasts system-wide events
-
-3. **Token Economy**: Economic system for resource allocation
-   - Token Manager: Handles token creation, transfer, and accounting
-   - Marketplace: Allows agents to exchange tokens for services
-
-4. **Virtual World**: Spatial environment for agent interactions
-   - Locations: Designated areas with specific properties
-   - Objects: Interactive items in the environment
-   - Movement System: Allows agents to navigate the world
-
-5. **Echo Loop**: Reflection and learning mechanism
-   - Journal: Records agent reflections and thoughts
-   - Portfolio: Tracks achievements and skills
-   - Structured Reflection: Guided self-improvement process
-
-6. **Web Interface**: Dashboard for monitoring and control
-   - Agent Management: View and manage agents
-   - System Monitoring: Track system performance
-   - Simulation Controls: Run and control simulations
-
-## Getting Started
-
-### Prerequisites
-
-- Python 3.8+
-- Node.js 14+
-- npm or yarn
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/faucetfan/AnnabanOS_Enhanced.git
-cd AnnabanOS_Enhanced
+```text
+agents/
+  base_agent.py
+  council.py
+  environment.py
+dashboard/
+  app.py
+  metrics.py
+  data_mock.json
+docs/
+  AnnabanAI_Whitepaper_v1.md
+  revision_log.md
+governance/
+  principles.md
+  framework.md
+data/
+  actions_log.json
+  votes_log.json
+  human_veto_events.json
+  value_return_log.json
+README.md
+LICENSE
+requirements.txt
+CONTRIBUTING.md
+.gitignore
 ```
 
-2. Install Python dependencies:
-```bash
-pip install -r requirements.txt
-```
+## Quick Start
 
-3. Install frontend dependencies:
-```bash
-cd web_app/frontend
-npm install
-```
+1. Clone repository
+   ```bash
+   git clone <your-repo-url>
+   cd AnnabanAI
+   ```
 
-### Running the System
+2. Create environment and install dependencies
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate
+   pip install -r requirements.txt
+   ```
 
-1. Start the backend API:
-```bash
-cd web_app/backend
-python app.py
-```
+3. Run a sample governance event (writes JSON logs)
+   ```bash
+   python -m agents.environment
+   ```
 
-2. Start the frontend development server:
-```bash
-cd web_app/frontend
-npm start
-```
+4. Launch transparency dashboard
+   ```bash
+   streamlit run dashboard/app.py
+   ```
 
-3. Access the dashboard at http://localhost:3000
+## Human-Sovereignty Features
+- **Council voting:** Proposal scoring by multiple role-based agents.
+- **Human Veto Node:** Required human sign-off for selected decisions.
+- **Audit logs:** JSON logs for actions, votes, and veto events.
+- **Value Return Protocol:** Conceptual routing of benefits to public-good projects.
 
-### Running a Simulation
+## Legacy Vision Context (Preserved)
+The project has historically been described as **AnnabanAI + Grok-4 Heavy: Human-Sovereign Multi-Agent Integration** with a long-term philosophy of:
+- **Truth**
+- **Sovereignty**
+- **Multi-Planetary reliability**
 
-You can run a simulation directly from the command line:
+The legacy architecture narrative included:
+1. Input orchestration and utility optimization.
+2. Parallel multi-agent task execution and cross-evaluation.
+3. Human Veto Node approval checkpoints.
+4. Blockchain governance logging.
 
-```bash
-python main.py --cycles 5
-```
+These items are preserved as historical roadmap context and should be interpreted as aspirational unless explicitly implemented in this prototype branch.
 
-Or use the web dashboard to run simulation cycles interactively.
+### Historical Performance Targets (from earlier README versions)
+| Metric | Improvement / Status |
+| :--- | :--- |
+| **Truth-Seeking Accuracy** | **+35%** (Climate Simulation testing target) |
+| **Human Sovereignty Adherence** | **99%** (Human Veto Node target) |
+| **Operational Readiness** | **Mars Operations Ready** (long-term objective) |
+| **Autonomy Model** | **Scalable Autonomy** (historical design goal) |
 
 ## Documentation
+- [Architecture Deep Dive](docs/annabanai.md)
+- [Human Veto Protocol](docs/audit_protocol.md)
+- [Blockchain Governance](docs/token_economy.md)
+- [Agent Specifications](docs/agents.md)
+- [Whitepaper v1](docs/AnnabanAI_Whitepaper_v1.md)
+- [Governance Principles](governance/principles.md)
+- [Governance Framework](governance/framework.md)
+- [Revision Log](docs/revision_log.md)
 
-Comprehensive documentation for public APIs, functions, and components is available in the `docs/` directory:
+## Next Steps (Suggested Extensions)
+- Add a simple API layer (FastAPI) for proposal submission.
+- Add scenario templates for governance stress-testing.
+- Add unit tests for scoring and consensus logic.
+- Add role-management + signed human approvals.
+- Add dashboard filters for historical review by policy area.
 
-- [Docs Overview](docs/README.md)
-- [Usage](docs/usage.md)
-- [API Reference](docs/api.md)
-- [AnnabanAI Components](docs/annabanai.md)
-- [Agents](docs/agents.md)
-- [Environment & Virtual World](docs/environment.md)
-- [Token Economy](docs/token_economy.md)
-- [Blockchain Wallet Capabilities](docs/wallet_capabilities.md)
-
-## Configuration
-
-The system can be configured using the `config/config.yaml` file. See the comments in the file for available options.
-
-## Directory Structure
-
-```
-AnnabanOS_Enhanced/
-├── agents/                 # Agent implementations
-├── annabanai/              # Core AI components
-├── config/                 # Configuration system
-├── environment/            # Environment implementation
-├── token_economy/          # Token economy system
-├── utils/                  # Utility functions
-├── web_app/                # Web interface
-│   ├── backend/            # Flask API backend
-│   └── frontend/           # React frontend
-├── tests/                  # Test suite
-├── demos/                  # Demo scripts
-├── journal/                # Journal entries storage
-├── portfolio/              # Portfolio items storage
-├── main.py                 # Main entry point
-└── README.md               # This file
-```
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgments
-
-- Original AnnabanOS creators
-- The open-source AI community
-
+## Attribution
+All project outputs are attributed to human authorship and human governance authority. AI-assisted drafting does not replace human accountability.

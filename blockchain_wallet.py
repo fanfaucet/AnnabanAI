@@ -86,6 +86,10 @@ class BlockchainWalletService:
             raise ValueError("Transfer amount must be a number")
 
         amount_value = float(amount)
+        try:
+            amount_value = float(amount)
+        except (TypeError, ValueError) as exc:
+            raise ValueError("Transfer amount must be a finite number") from exc
 
         if not math.isfinite(amount_value):
             raise ValueError("Transfer amount must be a finite number")
