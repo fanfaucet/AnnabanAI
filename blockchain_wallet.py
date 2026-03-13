@@ -82,6 +82,10 @@ class BlockchainWalletService:
         asset: Optional[str] = None,
     ) -> WalletTransaction:
         """Transfer funds between wallets and record on the local ledger."""
+        if isinstance(amount, bool) or not isinstance(amount, (int, float)):
+            raise ValueError("Transfer amount must be a number")
+
+        amount_value = float(amount)
         try:
             amount_value = float(amount)
         except (TypeError, ValueError) as exc:
