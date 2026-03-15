@@ -211,6 +211,146 @@ Possible expansions of this project concept:
 
 ---
 
+## 🏡 Human Horizon Mode
+
+The AnnabanAI Lattice Nursery includes a conceptual feature called **Human Horizon Mode**.
+
+Instead of modeling abstract global systems, the simulation focuses on a **community-scale environment** representing a small town of approximately **10,900 residents**.
+
+The purpose is to anchor AI exploration in **real human environments**.
+
+### Why 10,900?
+
+Communities of this size are large enough to contain:
+
+- schools
+- hospitals or clinics
+- small businesses
+- municipal infrastructure
+- local government
+- communications networks
+
+But small enough that **individual human impact remains visible**.
+
+---
+
+## 🌇 Dynamic Town Simulation
+
+The lattice environment can adjust its visualization and simulations based on **live or periodically updated public data sources**.
+
+Examples of adaptive signals:
+
+| Data Source | Simulation Adjustment |
+| --- | --- |
+| Weather data | modifies infrastructure stress tests |
+| Energy usage | affects grid resilience models |
+| population activity | adjusts communication network loads |
+| local events | influences decision-tree simulations |
+
+Example conceptual configuration:
+
+```python
+town_population = 10900
+
+town_state = {
+    "energy_load": live_energy_data(),
+    "weather": current_weather(),
+    "network_traffic": telecom_metrics(),
+    "public_activity": civic_events(),
+}
+```
+
+These inputs influence the Resilience Grove simulations.
+
+---
+
+## 🧑 Human-in-the-Loop Design
+
+Humans remain central to the system.
+
+The simulation assumes a human navigator who guides exploration.
+
+In practice this could represent:
+
+- local researchers
+- municipal planners
+- cybersecurity analysts
+- educators
+- students
+
+Their role:
+
+**Observe → Question → Explore → Improve**
+
+The AI ecosystem provides tools, visualizations, and simulations.
+
+Humans provide direction and judgment.
+
+---
+
+## 🐝 Community Exploration Agents
+
+Bee Companion agents can map community systems conceptually:
+
+- infrastructure flows
+- communication networks
+- environmental patterns
+- resilience scenarios
+
+They help visualize complex systems in a human-readable way.
+
+---
+
+## 🌍 Example Community Scenario
+
+A simulated town horizon may include:
+
+- municipal buildings
+- residential neighborhoods
+- schools
+- hospitals
+- telecom towers
+- power distribution nodes
+
+When data changes, the lattice responds.
+
+Example:
+
+```text
+Weather Alert: Severe Storm
+Simulation Response:
+• Resilience Grove activates grid stress tests
+• Bee agents analyze communication redundancy
+• Alignment Grove evaluates emergency decision trees
+```
+
+---
+
+## 🎯 Project Goal
+
+The purpose of Human Horizon Mode is to demonstrate how AI systems could support community-scale understanding of complex systems.
+
+Rather than focusing only on global models, the lattice explores how AI might help real communities learn, plan, and adapt.
+
+---
+
+## 🌅 Symbolic Horizon
+
+In the narrative visualization, the horizon always shows a small town under a wide sky.
+
+This reminds the system of its guiding principle:
+
+> Technology exists to serve people and the places they live.
+
+The human stands at the edge of the lattice, looking toward that town.
+
+The bee companion rests on their shoulder.
+
+Exploration continues from there.
+
+
+---
+
 ## 🤝 Contributing
 
 This project is an open conceptual framework.
