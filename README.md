@@ -86,6 +86,11 @@ These items are preserved as historical roadmap context and should be interprete
 | **Operational Readiness** | **Mars Operations Ready** (long-term objective) |
 | **Autonomy Model** | **Scalable Autonomy** (historical design goal) |
 
+
+## AnnabanOS-Lite Simulation
+
+This repository also includes `annabanos_lite/`, a modular operating-environment scaffold with a stable kernel layer, pluggable user modules, personalization config, persistent state, and CLI/Tk demo interfaces. See `annabanos_lite/README.md` for usage and extension guidance.
+
 ## Documentation
 - [Architecture Deep Dive](docs/annabanai.md)
 - [Human Veto Protocol](docs/audit_protocol.md)
