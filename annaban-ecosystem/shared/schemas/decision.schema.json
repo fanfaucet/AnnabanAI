@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AnnabanDecision",
+  "type": "object",
+  "required": ["actions", "confidence", "explainability", "ethical_score", "requires_human"],
+  "properties": {
+    "actions": { "type": "array", "items": { "type": "string" } },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "explainability": { "type": "array", "items": { "type": "string" } },
+    "ethical_score": { "type": "number", "minimum": 0, "maximum": 1 },
+    "requires_human": { "const": true }
+  }
+}
