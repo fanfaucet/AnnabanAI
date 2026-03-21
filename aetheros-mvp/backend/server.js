@@ -4,7 +4,7 @@ const path = require('path');
 const { decryptPayload, encryptResponse } = require('./crypto');
 const { verifyClientSignature, signServerMessage } = require('./sign');
 const { boxPublicKeyB64, signPublicKeyB64 } = require('./vault');
-const { enforceReplayProtection } = require('./replay');
+const { isReplay, withinDrift } = require('./replay');
 const { appendLedgerEntry, verifyLedger } = require('./audit');
 
 const app = express();
@@ -15,8 +15,8 @@ const ledgerPath = path.resolve(process.env.LEDGER_PATH || './heritage_ledger.lo
 app.use(express.json({ limit: '1mb' }));
 
 const auditStatus = verifyLedger(ledgerPath);
-if (!auditStatus.valid) {
-  console.error(`Startup audit failed: ${auditStatus.reason}`);
+if (!auditStatus.ok) {
+  console.error('Startup audit failed:', auditStatus);
   process.exit(1);
 }
 
@@ -53,7 +53,13 @@ app.post('/message', (req, res) => {
       return res.status(401).json({ error: 'Invalid client signature' });
     }
 
-    enforceReplayProtection(decrypted.msgId, decrypted.timestamp, maxDriftMs);
+    if (isReplay(decrypted.msgId)) {
+      return res.status(409).json({ error: 'Replay detected: duplicate msgId' });
+    }
+
+    if (!withinDrift(decrypted.timestamp, maxDriftMs)) {
+      return res.status(400).json({ error: 'Replay detected: timestamp outside drift window' });
+    }
 
     const processed = resolveIntent(decrypted.message.intent);
     const responseMessage = {

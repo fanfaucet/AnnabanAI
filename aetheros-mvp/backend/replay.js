@@ -1,18 +1,20 @@
-const seenMessageIds = new Set();
+const seen = new Set();
 
-function enforceReplayProtection(msgId, timestamp, maxDriftMs) {
-  if (seenMessageIds.has(msgId)) {
-    throw new Error('Replay detected: duplicate msgId');
+function isReplay(msgId) {
+  if (seen.has(msgId)) {
+    return true;
   }
 
-  const delta = Math.abs(Date.now() - Number(timestamp));
-  if (Number.isNaN(delta) || delta > maxDriftMs) {
-    throw new Error('Replay detected: timestamp outside drift window');
-  }
+  seen.add(msgId);
+  return false;
+}
 
-  seenMessageIds.add(msgId);
+function withinDrift(timestamp, maxSkewMs = 30_000) {
+  const now = Date.now();
+  return Math.abs(now - Number(timestamp)) <= maxSkewMs;
 }
 
 module.exports = {
-  enforceReplayProtection
+  isReplay,
+  withinDrift
 };

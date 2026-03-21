@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-LEDGER="$(dirname "$0")/../backend/heritage_ledger.log"
-: > "$LEDGER"
-echo "Ledger reset: $LEDGER"
+cd "$(dirname "$0")/../backend" || exit 1
+LEDGER_PATH=${LEDGER_PATH:-./heritage_ledger.log}
+echo -n "" > "$LEDGER_PATH"
+echo "Ledger cleared at $LEDGER_PATH"

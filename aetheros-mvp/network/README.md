@@ -1,14 +1,17 @@
 # AetherOS Phase 2 Network (Optional)
 
-This module adds a minimal multi-node trust network:
+This folder provides a minimal multi-node trust network:
 
-- Node registration with signed identities.
-- Peer list synchronization.
-- Signed relay envelopes for forwarding payloads.
+- `config.example.js`: node identity, endpoint, port, and static peers.
+- `node.js`: Express node service with identity bootstrap, registration, peer list, and relay endpoint.
+- `registry.js`: signed node identity verification and registration.
+- `relay.js`: signature-verified relay forwarding.
 
-## Components
+## Run a Node
 
-- `registry.js`: in-memory node registry + signature checks.
-- `relay.js`: verifies sender identity and relays encrypted envelopes.
+```bash
+cd network
+node node.js
+```
 
-The design keeps each node sovereign (independent keypairs) while enabling verified routing.
+For multiple nodes, copy `config.example.js` per instance and adjust `nodeId`, `port`, and `endpoint`.

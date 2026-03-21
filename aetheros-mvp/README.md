@@ -9,7 +9,7 @@ aetheros-mvp/
   backend/
   android/
   scripts/
-  network/ (optional phase 2)
+  network/ (optional phase 2: config.example.js, node.js, registry.js, relay.js)
 ```
 
 ## Backend Setup (Node.js)

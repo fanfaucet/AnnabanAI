@@ -1,9 +1,8 @@
 const crypto = require('crypto');
 const fs = require('fs');
 
-function computeHash(entry, prevHash) {
-  const materialized = JSON.stringify({ ...entry, prevHash });
-  return crypto.createHash('sha256').update(materialized).digest('hex');
+function sha256(value) {
+  return crypto.createHash('sha256').update(value).digest('hex');
 }
 
 function readLedger(ledgerPath) {
@@ -11,12 +10,12 @@ function readLedger(ledgerPath) {
     return [];
   }
 
-  const content = fs.readFileSync(ledgerPath, 'utf8').trim();
-  if (!content) {
+  const raw = fs.readFileSync(ledgerPath, 'utf8').trim();
+  if (!raw) {
     return [];
   }
 
-  return content
+  return raw
     .split('\n')
     .map((line) => line.trim())
     .filter(Boolean)
@@ -25,7 +24,7 @@ function readLedger(ledgerPath) {
 
 function appendLedgerEntry(ledgerPath, entryInput) {
   const ledger = readLedger(ledgerPath);
-  const prevHash = ledger.length ? ledger[ledger.length - 1].hash : 'GENESIS';
+  const prevHash = ledger.length ? ledger[ledger.length - 1].hash : null;
 
   const entry = {
     timestamp: entryInput.timestamp,
@@ -35,49 +34,40 @@ function appendLedgerEntry(ledgerPath, entryInput) {
     prevHash
   };
 
-  const hash = computeHash(entry, prevHash);
+  const hash = sha256(JSON.stringify(entry) + (entry.prevHash || ''));
   const committed = { ...entry, hash };
   fs.appendFileSync(ledgerPath, `${JSON.stringify(committed)}\n`);
   return committed;
 }
 
-function verifyLedger(ledgerPath) {
+function verifyLedger(ledgerPath = './heritage_ledger.log') {
   const ledger = readLedger(ledgerPath);
-  let expectedPrevHash = 'GENESIS';
+  let prevHash = null;
 
-  for (const entry of ledger) {
-    if (entry.prevHash !== expectedPrevHash) {
-      return {
-        valid: false,
-        reason: `prevHash mismatch for msgId ${entry.msgId}`
-      };
+  for (let i = 0; i < ledger.length; i += 1) {
+    const entry = ledger[i];
+    const clone = { ...entry };
+    const storedHash = clone.hash;
+    delete clone.hash;
+
+    const recomputed = sha256(JSON.stringify(clone) + (clone.prevHash || ''));
+
+    if (entry.prevHash !== prevHash) {
+      return { ok: false, reason: 'prevHash mismatch', at: i };
     }
 
-    const recalculated = computeHash(
-      {
-        timestamp: entry.timestamp,
-        msgId: entry.msgId,
-        direction: entry.direction,
-        payload: entry.payload,
-        prevHash: entry.prevHash
-      },
-      entry.prevHash
-    );
-
-    if (recalculated !== entry.hash) {
-      return {
-        valid: false,
-        reason: `hash mismatch for msgId ${entry.msgId}`
-      };
+    if (storedHash !== recomputed) {
+      return { ok: false, reason: 'hash mismatch', at: i };
     }
 
-    expectedPrevHash = entry.hash;
+    prevHash = storedHash;
   }
 
-  return { valid: true, reason: 'Ledger chain is valid' };
+  return { ok: true, lastHash: prevHash, count: ledger.length };
 }
 
 module.exports = {
+  readLedger,
   appendLedgerEntry,
   verifyLedger
 };
