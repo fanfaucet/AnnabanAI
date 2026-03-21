@@ -68,6 +68,14 @@ Each approved decision records:
 
 Smart contract: `backend/blockchain/contracts/DecisionNFT.sol`
 
+
+## Using with ChatGPT
+
+You can use the platform with ChatGPT either as an advisory governance copilot or through Custom GPT Actions.
+
+- Quick guide: `docs/chatgpt-usage.md`
+- Key rule: ChatGPT should **never** autonomously approve actions; human approval is always required.
+
 ## Deployment
 
 - Docker Compose for local full stack (`infra/docker-compose.yml`)
