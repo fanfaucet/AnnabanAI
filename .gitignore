@@ -11,3 +11,7 @@ __pycache__/
 
 # OS
 .DS_Store
+
+# Local build artifacts
+aetheros-mvp/backend/node_modules/
+aetheros-mvp/android/.gradle/
