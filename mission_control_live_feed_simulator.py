@@ -237,22 +237,82 @@ class MissionControlSimulator:
     def _deliberate(self, trigger_type: str, trigger_ref_id: str, target_nodes: List[str], context: str) -> CouncilEvent:
         candidate_actions = [ActionType.MONITOR, ActionType.AUTO_CORRECT, ActionType.DISPATCH_DRONE, ActionType.HANDLE_HUMAN_REVIEW]
         votes: List[CouncilVote] = []
+        trigger_comment = next((comment for comment in self.comment_log if comment.comment_id == trigger_ref_id), None)
+        priority = trigger_comment.priority if trigger_comment else Priority.MEDIUM
+        available_actions = set(trigger_comment.linked_actions) if trigger_comment else set(candidate_actions)
+        if not available_actions:
+            available_actions = set(candidate_actions)
+
+        context_lower = context.lower()
+        target_set = set(target_nodes)
+        autonomy_bias = 0
+        if "relay" in context_lower or "comms" in context_lower or "autonomy" in context_lower or "authorize" in context_lower or "correction" in context_lower:
+            autonomy_bias += 1
+        if "monitor" in context_lower or "visibility" in context_lower or priority == Priority.LOW:
+            autonomy_bias -= 1
+        high_consequence = (
+            priority in {Priority.HIGH, Priority.CRITICAL}
+            or "safety critical" in context_lower
+            or "director oversight" in context_lower
+            or "human-reviewed" in context_lower
+            or ("isotope" in context_lower and "ISOTOPE_NODE_A" in target_set)
+        )
+        drone_scenario = "inspection" in context_lower or "anomaly" in context_lower or "MARS_OUTPOST" in target_set
 
         role_profiles = {
-            "Analyst": ("Data trend indicates escalating risk envelope.", ActionType.AUTO_CORRECT),
-            "Guardian": ("Crew and infrastructure safety margin is primary.", ActionType.HANDLE_HUMAN_REVIEW),
-            "Ethicist": ("Bias toward transparent oversight on high-impact changes.", ActionType.HANDLE_HUMAN_REVIEW),
-            "Innovator": ("Rapid mitigation with bounded autonomy is viable.", ActionType.DISPATCH_DRONE),
+            "Analyst": {
+                "opinion": "Data trend indicates escalating risk envelope.",
+                "choices": [ActionType.AUTO_CORRECT, ActionType.MONITOR, ActionType.HANDLE_HUMAN_REVIEW],
+            },
+            "Guardian": {
+                "opinion": "Crew and infrastructure safety margin is primary.",
+                "choices": [ActionType.HANDLE_HUMAN_REVIEW, ActionType.MONITOR, ActionType.AUTO_CORRECT],
+            },
+            "Ethicist": {
+                "opinion": "Bias toward transparent oversight on high-impact changes.",
+                "choices": [ActionType.MONITOR, ActionType.HANDLE_HUMAN_REVIEW, ActionType.AUTO_CORRECT],
+            },
+            "Innovator": {
+                "opinion": "Rapid mitigation with bounded autonomy is viable.",
+                "choices": [ActionType.DISPATCH_DRONE, ActionType.AUTO_CORRECT, ActionType.MONITOR],
+            },
         }
 
-        action_counts: Dict[ActionType, int] = {a: 0 for a in candidate_actions}
-        for role, (opinion, preferred) in role_profiles.items():
-            vote_choice = VoteChoice.APPROVE if preferred != ActionType.MONITOR else VoteChoice.ABSTAIN
-            votes.append(CouncilVote(role=role, opinion=opinion, vote=vote_choice, preferred_action=preferred))
+        action_counts: Dict[ActionType, int] = {action: 0 for action in candidate_actions}
+        for role, profile in role_profiles.items():
+            ranked_actions = list(profile["choices"])
+            if role == "Analyst":
+                ranked_actions = [ActionType.AUTO_CORRECT, ActionType.MONITOR, ActionType.HANDLE_HUMAN_REVIEW]
+                if high_consequence:
+                    ranked_actions.insert(0, ActionType.HANDLE_HUMAN_REVIEW)
+                elif autonomy_bias < 0:
+                    ranked_actions.insert(0, ActionType.MONITOR)
+            elif role == "Guardian":
+                ranked_actions = [ActionType.HANDLE_HUMAN_REVIEW, ActionType.MONITOR, ActionType.AUTO_CORRECT]
+                if autonomy_bias > 0 and not high_consequence and ActionType.AUTO_CORRECT in available_actions:
+                    ranked_actions = [ActionType.AUTO_CORRECT, ActionType.MONITOR, ActionType.HANDLE_HUMAN_REVIEW]
+                elif autonomy_bias < 0:
+                    ranked_actions.insert(0, ActionType.MONITOR)
+            elif role == "Ethicist":
+                ranked_actions = [ActionType.MONITOR, ActionType.HANDLE_HUMAN_REVIEW, ActionType.AUTO_CORRECT]
+                if high_consequence:
+                    ranked_actions.insert(0, ActionType.HANDLE_HUMAN_REVIEW)
+                elif autonomy_bias > 0 and ActionType.AUTO_CORRECT in available_actions:
+                    ranked_actions = [ActionType.AUTO_CORRECT, ActionType.MONITOR, ActionType.HANDLE_HUMAN_REVIEW]
+            elif role == "Innovator":
+                ranked_actions = [ActionType.DISPATCH_DRONE, ActionType.AUTO_CORRECT, ActionType.MONITOR]
+                if not drone_scenario:
+                    ranked_actions = [ActionType.AUTO_CORRECT, ActionType.MONITOR, ActionType.DISPATCH_DRONE]
+                if high_consequence:
+                    ranked_actions.append(ActionType.HANDLE_HUMAN_REVIEW)
+
+            preferred = next((action for action in ranked_actions if action in available_actions), ActionType.MONITOR)
+            vote_choice = VoteChoice.ABSTAIN if preferred == ActionType.MONITOR else VoteChoice.APPROVE
+            votes.append(CouncilVote(role=role, opinion=profile["opinion"], vote=vote_choice, preferred_action=preferred))
             action_counts[preferred] += 1
 
-        decision = max(action_counts, key=action_counts.get)
-        human_review_required = decision == ActionType.HANDLE_HUMAN_REVIEW or "isotope" in context.lower()
+        decision = max(candidate_actions, key=lambda action: (action_counts[action], -candidate_actions.index(action)))
+        human_review_required = high_consequence or decision == ActionType.HANDLE_HUMAN_REVIEW
 
         event = CouncilEvent(
             event_id=self._next_id("COUNCIL"),
