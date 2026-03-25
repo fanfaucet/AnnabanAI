@@ -83,7 +83,14 @@ class AnnabanLLM:
             "default_max_tokens": 1024,
             "log_interactions": True,
             "human_oversight_threshold": 0.8,
-            "memory_retention_days": 90
+            "memory_retention_days": 90,
+            "reasoning_profile": {
+                "business_primary": "anthropic",
+                "personal_reasoning_primary": "chatgpt",
+                "reasoning_engine": "palantir",
+                "perspective_peer_reasoning": "grok",
+                "extended_knowledge": "gemini"
+            }
         }
     
     def _handle_oversight_notification(self, request):
@@ -113,6 +120,92 @@ class AnnabanLLM:
         
         thread = threading.Thread(target=delayed_approval)
         thread.start()
+
+    @staticmethod
+    def _is_high_impact_task(context: Dict[str, Any]) -> bool:
+        """
+        Determine whether the current request should be treated as a high-impact task.
+
+        Args:
+            context: Request context metadata
+
+        Returns:
+            True when the task is explicitly marked as high-impact or has a high-risk profile.
+        """
+        if not context:
+            return False
+
+        if context.get("high_impact_task") is True:
+            return True
+
+        risk_level = str(
+            context.get("intended_use_risk_level") or context.get("risk_level") or ""
+        ).strip().lower()
+        return risk_level in {"high", "high_risk", "critical", "very_high"}
+
+    @staticmethod
+    def _validate_required_governance_context(context: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Validate mandatory governance metadata required for higher-risk execution.
+
+        Required fields:
+          - jurisdiction_country
+          - industry_domain
+          - intended_use_risk_level
+          - subnational_region (only when context marks it as applicable)
+
+        Args:
+            context: Request context metadata
+
+        Returns:
+            Validation result containing pass/fail and missing field names.
+        """
+        required_fields = [
+            "jurisdiction_country",
+            "industry_domain",
+            "intended_use_risk_level"
+        ]
+        missing_fields = [
+            field_name for field_name in required_fields
+            if not str(context.get(field_name, "")).strip()
+        ]
+
+        subnational_region_applicable = bool(
+            context.get("subnational_region_applicable")
+            or context.get("subnational_region_required")
+        )
+        if subnational_region_applicable and not str(context.get("subnational_region", "")).strip():
+            missing_fields.append("subnational_region")
+
+        return {
+            "passed": len(missing_fields) == 0,
+            "missing_fields": missing_fields
+        }
+
+    def _resolve_reasoning_profile(self, context: Dict[str, Any]) -> Dict[str, str]:
+        """
+        Resolve the active reasoning profile for this request.
+
+        Business workflows default to Anthropic and personal reasoning defaults
+        to ChatGPT, while Palantir/Grok/Gemini remain supporting capabilities.
+        """
+        profile = self.config.get("reasoning_profile", {})
+        interaction_mode = str(context.get("interaction_mode", "")).strip().lower()
+
+        if interaction_mode == "business":
+            primary_assistant = profile.get("business_primary", "anthropic")
+        elif interaction_mode in {"personal", "personal_reasoning"}:
+            primary_assistant = profile.get("personal_reasoning_primary", "chatgpt")
+        else:
+            primary_assistant = profile.get("personal_reasoning_primary", "chatgpt")
+
+        return {
+            "interaction_mode": interaction_mode or "personal_reasoning",
+            "primary_assistant": primary_assistant,
+            "reasoning_engine": profile.get("reasoning_engine", "palantir"),
+            "perspective_peer_reasoning": profile.get("perspective_peer_reasoning", "grok"),
+            "extended_knowledge": profile.get("extended_knowledge", "gemini")
+        }
     
     def process_input(self, user_input: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
@@ -155,6 +248,32 @@ class AnnabanLLM:
                 "covenant_prompt_length": len(covenant_prompt),
                 "empathetic_prompt_length": len(empathetic_prompt)
             })
+
+            reasoning_profile = self._resolve_reasoning_profile(context)
+            result["processing_steps"].append({
+                "step": "reasoning_profile_selection",
+                "profile": reasoning_profile
+            })
+
+            # Step 2.5: Enforce required governance metadata for high-impact execution
+            if self._is_high_impact_task(context):
+                governance_validation = self._validate_required_governance_context(context)
+                result["processing_steps"].append({
+                    "step": "high_impact_context_validation",
+                    "passed": governance_validation["passed"],
+                    "missing_fields": governance_validation["missing_fields"]
+                })
+                if not governance_validation["passed"]:
+                    result["response"] = (
+                        "Execution blocked: missing required governance context fields for "
+                        "high-impact task handling."
+                    )
+                    result["error"] = (
+                        "Missing required fields: "
+                        + ", ".join(governance_validation["missing_fields"])
+                    )
+                    result["success"] = False
+                    return result
             
             # Step 3: Generate LLM response
             model_params = ModelParameters(
@@ -195,7 +314,14 @@ class AnnabanLLM:
             if validation_results["needs_human_oversight"]:
                 oversight_id = self.governance_module.request_oversight(
                     empathetic_output,
-                    {"risk_level": "medium_risk", "context": context}
+                    {
+                        "risk_level": context.get("intended_use_risk_level", "medium_risk"),
+                        "context": context,
+                        "jurisdiction_country": context.get("jurisdiction_country"),
+                        "subnational_region": context.get("subnational_region"),
+                        "industry_domain": context.get("industry_domain"),
+                        "intended_use_risk_level": context.get("intended_use_risk_level")
+                    }
                 )
                 
                 result["processing_steps"].append({
