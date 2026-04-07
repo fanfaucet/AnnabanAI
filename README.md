@@ -95,6 +95,7 @@ These items are preserved as historical roadmap context and should be interprete
 - [Governance Principles](governance/principles.md)
 - [Governance Framework](governance/framework.md)
 - [Revision Log](docs/revision_log.md)
+- [Systems Architect Mode](docs/system_architect_mode.md)
 
 ## Next Steps (Suggested Extensions)
 - Add a simple API layer (FastAPI) for proposal submission.
