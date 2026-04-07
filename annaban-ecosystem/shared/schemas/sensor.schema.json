@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SensorEvent",
+  "type": "object",
+  "required": ["source", "metric", "value", "unit", "location"],
+  "properties": {
+    "source": { "type": "string" },
+    "metric": { "type": "string" },
+    "value": { "type": "number" },
+    "unit": { "type": "string" },
+    "location": { "type": "string" }
+  }
+}
