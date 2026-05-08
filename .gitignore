@@ -11,3 +11,7 @@ __pycache__/
 
 # OS
 .DS_Store
+
+# Local build artifacts
+node_modules/
+.gradle/
