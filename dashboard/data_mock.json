@@ -1,0 +1,36 @@
+{
+  "governance_status": {
+    "mode": "prototype",
+    "human_sovereignty": "enabled",
+    "transparency_logging": "active"
+  },
+  "council_vote_results": [
+    {
+      "proposal_id": "proposal_demo_001",
+      "consensus_score": 0.81,
+      "consensus_reached": true,
+      "final_status": "approved"
+    },
+    {
+      "proposal_id": "proposal_demo_002",
+      "consensus_score": 0.59,
+      "consensus_reached": false,
+      "final_status": "rejected_by_council"
+    }
+  ],
+  "human_veto_events": [
+    {
+      "proposal_id": "proposal_demo_003",
+      "guardian": "Designated Human Steward",
+      "human_approved": false,
+      "veto_triggered": true
+    }
+  ],
+  "revision_log": [
+    "v0.1.0 - Initial governance simulation scaffold created"
+  ],
+  "contributors": [
+    "Human Author - Project Steward",
+    "Human Author - Community Reviewer"
+  ]
+}

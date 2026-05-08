@@ -1,151 +1,454 @@
-# AnnabanOS Enhanced
+# 🌐 AnnabanAI Lattice Nursery
+### A Conceptual Human–AI Collaboration Ecosystem
 
-AnnabanOS Enhanced is an advanced multi-agent system framework that enables the creation, management, and interaction of intelligent agents in a simulated environment. This enhanced version builds upon the original AnnabanOS with additional features and improvements.
+Welcome to **AnnabanAI Lattice Nursery**, a conceptual project exploring how humans and AI systems might collaborate inside a **distributed, cooperative intelligence environment**.
 
-## Features
+This repository presents a **symbolic simulation architecture** where AI agents, human guidance, and research domains interact within a living digital lattice.
 
-- **Advanced Agent Architecture**: Task agents, social agents, and conversational agents with improved capabilities
-- **Multi-Agent Collectives**: Groups of agents that can collaborate on complex tasks
-- **Enhanced Token Economy**: Sophisticated token management system with marketplace functionality
-- **Virtual World Environment**: Spatial simulation with locations, objects, and agent movement
-- **Structured Reflection System**: Improved Echo Loop for agent self-reflection and learning
-- **Web Dashboard**: Modern web interface for monitoring and interacting with the system
-- **Configuration System**: Flexible configuration options for customizing system behavior
-- **Logging and Monitoring**: Comprehensive logging and monitoring capabilities
+The project blends:
 
-## System Architecture
+- multi-agent simulation
+- conceptual cybersecurity research modeling
+- AI alignment exploration
+- infrastructure resilience studies
+- narrative visualization of cooperative intelligence
 
-AnnabanOS Enhanced consists of several key components:
+The goal is to make complex AI collaboration ideas **accessible, visual, and shareable**.
 
-1. **Agents**: Different types of agents with specialized capabilities
-   - Task Agents: Focus on completing tasks and solving problems
-   - Social Agents: Specialize in communication and relationship building
-   - Conversational Agents: Interact with users through natural language
+---
 
-2. **Environment**: The shared space where agents exist and interact
-   - Agent Registry: Keeps track of all agents in the system
-   - Message Passing: Enables communication between agents
-   - Event System: Broadcasts system-wide events
+## 🧠 Core Idea
 
-3. **Token Economy**: Economic system for resource allocation
-   - Token Manager: Handles token creation, transfer, and accounting
-   - Marketplace: Allows agents to exchange tokens for services
+Traditional AI systems are usually **single interfaces** responding to user prompts.
 
-4. **Virtual World**: Spatial environment for agent interactions
-   - Locations: Designated areas with specific properties
-   - Objects: Interactive items in the environment
-   - Movement System: Allows agents to navigate the world
+AnnabanAI explores an alternative concept:
 
-5. **Echo Loop**: Reflection and learning mechanism
-   - Journal: Records agent reflections and thoughts
-   - Portfolio: Tracks achievements and skills
-   - Structured Reflection: Guided self-improvement process
+**AI as a collaborative ecosystem.**
 
-6. **Web Interface**: Dashboard for monitoring and control
-   - Agent Management: View and manage agents
-   - System Monitoring: Track system performance
-   - Simulation Controls: Run and control simulations
+Three conceptual layers form the architecture:
 
-## Getting Started
+**Human Curiosity**
+↓
+**Knowledge Interface** *(AI conversation layer)*
+↓
+**Lattice Ecosystem** *(co-creation environment)*
+↓
+**Security Boundary** *(simulation safety layer)*
 
-### Prerequisites
+This structure represents a **trust architecture** for cooperative AI exploration.
 
-- Python 3.8+
-- Node.js 14+
-- npm or yarn
+---
 
-### Installation
+## 🐝 Exploration Agents
 
-1. Clone the repository:
-```bash
-git clone https://github.com/faucetfan/AnnabanOS_Enhanced.git
-cd AnnabanOS_Enhanced
+Inside the lattice nursery, lightweight agents called **Bee Companions** explore the environment.
+
+These agents symbolize:
+
+- distributed intelligence
+- curiosity-driven exploration
+- lightweight research probes
+
+They map knowledge, test hypotheses, and return results to the human operator.
+
+In the narrative simulation, the bee companion ultimately rests on the human’s shoulder—symbolizing that **humans guide the direction of AI exploration**.
+
+---
+
+## 🌱 Research Groves
+
+The lattice nursery dynamically grows specialized research environments called **groves**.
+
+Each grove represents a conceptual research domain.
+
+### 🛡️ Defense Grove
+
+A cybersecurity modeling environment.
+
+Focus areas:
+
+- anomaly detection simulations
+- threat pattern modeling
+- distributed monitoring concepts
+
+Example concepts explored:
+
+- AI-assisted cyber defense
+- anomaly classification models
+- simulated threat detection agents
+
+### 🌌 Alignment Grove
+
+A conceptual testing ground for AI decision systems.
+
+Focus areas:
+
+- ethical constraint modeling
+- decision-tree simulations
+- cooperative AI reasoning
+
+Example concepts explored:
+
+- AI alignment research
+- constraint validation loops
+- decision path visualization
+
+### 🌊 Resilience Grove
+
+A simulation environment for infrastructure stability.
+
+Focus areas:
+
+- network robustness
+- satellite system simulations
+- critical infrastructure resilience
+
+Example concepts explored:
+
+- grid stability modeling
+- redundancy networks
+- resilience stress testing
+
+---
+
+## 🧩 Multi-Agent Simulation Framework
+
+The project includes a lightweight conceptual agent system:
+
+```python
+class Agent:
+    def __init__(self, name, influence):
+        self.name = name
+        self.influence = influence
 ```
 
-2. Install Python dependencies:
-```bash
-pip install -r requirements.txt
+Agents attempt tasks with success probability influenced by:
+
+```text
+success = influence - complexity + random_variance
 ```
 
-3. Install frontend dependencies:
-```bash
-cd web_app/frontend
-npm install
+This simple framework demonstrates distributed task execution among cooperative agents.
+
+---
+
+## 🌐 Conceptual Architecture
+
+The system imagines three cooperating nodes:
+
+| Node | Role |
+| --- | --- |
+| Knowledge Interface | interprets human prompts |
+| Lattice Ecosystem | generates collaborative simulation |
+| Security Boundary | ensures safe educational modeling |
+
+Together they form a triangular trust model:
+
+```text
+Interface → Ecosystem → Security
+        ↘ Trust Architecture ↙
 ```
 
-### Running the System
+---
 
-1. Start the backend API:
-```bash
-cd web_app/backend
-python app.py
+## 🛰️ Simulation Philosophy
+
+AnnabanAI is intentionally conceptual and educational.
+
+The environment simulates ideas about:
+
+- distributed AI ecosystems
+- collaborative research networks
+- safe AI experimentation environments
+
+No real systems, networks, or operational infrastructure are accessed.
+
+---
+
+## 📊 Example Simulation Output
+
+- Lattice Expansion Rate: +41% per cycle
+- Agent Activity: High
+- Simulation Stability: Excellent
+- Global Joy-density: 93%
+
+Metrics like joy-density symbolize system health and collaborative engagement.
+
+---
+
+## 🌍 Why This Project Exists
+
+Complex AI systems are often difficult to explain.
+
+The AnnabanAI lattice approach helps visualize:
+
+- AI cooperation
+- research ecosystems
+- safe experimentation environments
+
+It translates abstract ideas into story-driven system models.
+
+---
+
+## ✨ Key Message
+
+Technology should always remain human-directed.
+
+In the simulation story, the moment when the human places the exploration bee on their shoulder represents this principle:
+
+> AI explores with us, but people choose the destination.
+
+---
+
+## 🚀 Future Directions
+
+Possible expansions of this project concept:
+
+- distributed AI research simulations
+- visualization tools for multi-agent systems
+- educational models for cybersecurity ecosystems
+- conceptual frameworks for AI alignment testing
+
+---
+
+## 🏡 Human Horizon Mode
+
+The AnnabanAI Lattice Nursery includes a conceptual feature called **Human Horizon Mode**.
+
+Instead of modeling abstract global systems, the simulation focuses on a **community-scale environment** representing a small town of approximately **10,900 residents**.
+
+The purpose is to anchor AI exploration in **real human environments**.
+
+### Why 10,900?
+
+Communities of this size are large enough to contain:
+
+- schools
+- hospitals or clinics
+- small businesses
+- municipal infrastructure
+- local government
+- communications networks
+
+But small enough that **individual human impact remains visible**.
+
+---
+
+## 🌇 Dynamic Town Simulation
+
+The lattice environment can adjust its visualization and simulations based on **live or periodically updated public data sources**.
+
+Examples of adaptive signals:
+
+| Data Source | Simulation Adjustment |
+| --- | --- |
+| Weather data | modifies infrastructure stress tests |
+| Energy usage | affects grid resilience models |
+| population activity | adjusts communication network loads |
+| local events | influences decision-tree simulations |
+
+Example conceptual configuration:
+
+```python
+town_population = 10900
+
+town_state = {
+    "energy_load": live_energy_data(),
+    "weather": current_weather(),
+    "network_traffic": telecom_metrics(),
+    "public_activity": civic_events(),
+}
 ```
 
-2. Start the frontend development server:
-```bash
-cd web_app/frontend
-npm start
+These inputs influence the Resilience Grove simulations.
+
+---
+
+## 🧑 Human-in-the-Loop Design
+
+Humans remain central to the system.
+
+The simulation assumes a human navigator who guides exploration.
+
+In practice this could represent:
+
+- local researchers
+- municipal planners
+- cybersecurity analysts
+- educators
+- students
+
+Their role:
+
+**Observe → Question → Explore → Improve**
+
+The AI ecosystem provides tools, visualizations, and simulations.
+
+Humans provide direction and judgment.
+
+---
+
+## 🐝 Community Exploration Agents
+
+Bee Companion agents can map community systems conceptually:
+
+- infrastructure flows
+- communication networks
+- environmental patterns
+- resilience scenarios
+
+They help visualize complex systems in a human-readable way.
+
+---
+
+## 🌍 Example Community Scenario
+
+A simulated town horizon may include:
+
+- municipal buildings
+- residential neighborhoods
+- schools
+- hospitals
+- telecom towers
+- power distribution nodes
+
+When data changes, the lattice responds.
+
+Example:
+
+```text
+Weather Alert: Severe Storm
+Simulation Response:
+• Resilience Grove activates grid stress tests
+• Bee agents analyze communication redundancy
+• Alignment Grove evaluates emergency decision trees
 ```
 
-3. Access the dashboard at http://localhost:3000
+---
 
-### Running a Simulation
+## 🎯 Project Goal
 
-You can run a simulation directly from the command line:
+The purpose of Human Horizon Mode is to demonstrate how AI systems could support community-scale understanding of complex systems.
 
-```bash
-python main.py --cycles 5
-```
+Rather than focusing only on global models, the lattice explores how AI might help real communities learn, plan, and adapt.
 
-Or use the web dashboard to run simulation cycles interactively.
+---
+
+## 🌅 Symbolic Horizon
+
+In the narrative visualization, the horizon always shows a small town under a wide sky.
+
+This reminds the system of its guiding principle:
+
+> Technology exists to serve people and the places they live.
+
+The human stands at the edge of the lattice, looking toward that town.
+
+The bee companion rests on their shoulder.
+
+Exploration continues from there.
+
+
+---
+
+## 🤝 Contributing
+
+This project is an open conceptual framework.
+
+Ideas are welcome in areas such as:
+
+- simulation environments
+- multi-agent architectures
+- AI safety concepts
+- visualization tools
+
+---
+
+## 📜 License
+
+This project is shared for educational and conceptual exploration purposes.
+
+---
+
+## 🐝 Final Message
+
+Explore.
+Learn.
+Build safer systems.
+
+The lattice is open.
+
+**Where should the next exploration go?**
+## Quick Start
+
+1. Clone repository
+   ```bash
+   git clone <your-repo-url>
+   cd AnnabanAI
+   ```
+
+2. Create environment and install dependencies
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate
+   pip install -r requirements.txt
+   ```
+
+3. Run a sample governance event (writes JSON logs)
+   ```bash
+   python -m agents.environment
+   ```
+
+4. Launch transparency dashboard
+   ```bash
+   streamlit run dashboard/app.py
+   ```
+
+## Human-Sovereignty Features
+- **Council voting:** Proposal scoring by multiple role-based agents.
+- **Human Veto Node:** Required human sign-off for selected decisions.
+- **Audit logs:** JSON logs for actions, votes, and veto events.
+- **Value Return Protocol:** Conceptual routing of benefits to public-good projects.
+
+## Legacy Vision Context (Preserved)
+The project has historically been described as **AnnabanAI + Grok-4 Heavy: Human-Sovereign Multi-Agent Integration** with a long-term philosophy of:
+- **Truth**
+- **Sovereignty**
+- **Multi-Planetary reliability**
+
+The legacy architecture narrative included:
+1. Input orchestration and utility optimization.
+2. Parallel multi-agent task execution and cross-evaluation.
+3. Human Veto Node approval checkpoints.
+4. Blockchain governance logging.
+
+These items are preserved as historical roadmap context and should be interpreted as aspirational unless explicitly implemented in this prototype branch.
+
+### Historical Performance Targets (from earlier README versions)
+| Metric | Improvement / Status |
+| :--- | :--- |
+| **Truth-Seeking Accuracy** | **+35%** (Climate Simulation testing target) |
+| **Human Sovereignty Adherence** | **99%** (Human Veto Node target) |
+| **Operational Readiness** | **Mars Operations Ready** (long-term objective) |
+| **Autonomy Model** | **Scalable Autonomy** (historical design goal) |
 
 ## Documentation
+- [Architecture Deep Dive](docs/annabanai.md)
+- [Human Veto Protocol](docs/audit_protocol.md)
+- [Blockchain Governance](docs/token_economy.md)
+- [Agent Specifications](docs/agents.md)
+- [Whitepaper v1](docs/AnnabanAI_Whitepaper_v1.md)
+- [Governance Principles](governance/principles.md)
+- [Governance Framework](governance/framework.md)
+- [Revision Log](docs/revision_log.md)
+- [Systems Architect Mode](docs/system_architect_mode.md)
 
-Comprehensive documentation for public APIs, functions, and components is available in the `docs/` directory:
+## Next Steps (Suggested Extensions)
+- Add a simple API layer (FastAPI) for proposal submission.
+- Add scenario templates for governance stress-testing.
+- Add unit tests for scoring and consensus logic.
+- Add role-management + signed human approvals.
+- Add dashboard filters for historical review by policy area.
 
-- [Docs Overview](docs/README.md)
-- [Usage](docs/usage.md)
-- [API Reference](docs/api.md)
-- [AnnabanAI Components](docs/annabanai.md)
-- [Agents](docs/agents.md)
-- [Environment & Virtual World](docs/environment.md)
-- [Token Economy](docs/token_economy.md)
-
-## Configuration
-
-The system can be configured using the `config/config.yaml` file. See the comments in the file for available options.
-
-## Directory Structure
-
-```
-AnnabanOS_Enhanced/
-├── agents/                 # Agent implementations
-├── annabanai/              # Core AI components
-├── config/                 # Configuration system
-├── environment/            # Environment implementation
-├── token_economy/          # Token economy system
-├── utils/                  # Utility functions
-├── web_app/                # Web interface
-│   ├── backend/            # Flask API backend
-│   └── frontend/           # React frontend
-├── tests/                  # Test suite
-├── demos/                  # Demo scripts
-├── journal/                # Journal entries storage
-├── portfolio/              # Portfolio items storage
-├── main.py                 # Main entry point
-└── README.md               # This file
-```
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgments
-
-- Original AnnabanOS creators
-- The open-source AI community
-
+## Attribution
+All project outputs are attributed to human authorship and human governance authority. AI-assisted drafting does not replace human accountability.

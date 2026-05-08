@@ -9,8 +9,10 @@ Welcome to the AnnabanOS Enhanced documentation. This guide covers public APIs, 
 - [Agents](./agents.md)
 - [Environment & Virtual World](./environment.md)
 - [Token Economy](./token_economy.md)
+- [Blockchain Wallet Capabilities](./wallet_capabilities.md)
 - [Atmospheric Log (Advisory Perspective)](./advisory_log.md)
 - [Audit Protocol Overview](./audit_protocol.md)
+- [Systems Architect Mode](./system_architect_mode.md)
 
 ## What is AnnabanOS Enhanced?
 AnnabanOS Enhanced is a multi-agent framework with a virtual world, token economy, and a reflection system (AnnabanAI). You can run simulations via CLI or integrate the modules programmatically.
