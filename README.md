@@ -3,6 +3,14 @@
 
 Welcome to **AnnabanAI Lattice Nursery**, a conceptual project exploring how humans and AI systems might collaborate inside a **distributed, cooperative intelligence environment**.
 
+## Annaban AI + AnnabanAI + Annaban Human Safety
+
+This project treats **Annaban AI** and **AnnabanAI** as the same core platform: a reflection-first, multi-agent system designed to keep humans in authority.
+
+- **Annaban AI / AnnabanAI**: The technical framework for agents, simulation, and conversational intelligence.
+- **Annaban Human Safety**: The governance layer that prioritizes simulation-first workflows, explicit decision gates, and human authorization before any irreversible or real-world action.
+
+## Features
 This repository presents a **symbolic simulation architecture** where AI agents, human guidance, and research domains interact within a living digital lattice.
 
 The project blends:
@@ -338,6 +346,8 @@ Rather than focusing only on global models, the lattice explores how AI might he
 
 In the narrative visualization, the horizon always shows a small town under a wide sky.
 
+- Original AnnabanOS creators
+- The open-source AI community
 This reminds the system of its guiding principle:
 
 > Technology exists to serve people and the places they live.
