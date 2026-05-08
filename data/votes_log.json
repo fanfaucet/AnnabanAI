@@ -1,0 +1,92 @@
+[
+  {
+    "timestamp": "2026-03-13T22:55:15.442762+00:00",
+    "proposal_id": "proposal_demo_001",
+    "vote_result": {
+      "evaluations": [
+        {
+          "agent": "Ada",
+          "role": "Safety Steward",
+          "score": 0.82,
+          "vote": "approve",
+          "reasoning": [
+            "human_benefit=0.90 \u00d7 weight 0.45 contributes 0.41",
+            "safety=0.80 \u00d7 weight 0.30 contributes 0.24",
+            "feasibility=0.70 \u00d7 weight 0.25 contributes 0.17"
+          ]
+        },
+        {
+          "agent": "Lin",
+          "role": "Public Benefit Analyst",
+          "score": 0.82,
+          "vote": "approve",
+          "reasoning": [
+            "human_benefit=0.90 \u00d7 weight 0.45 contributes 0.41",
+            "safety=0.80 \u00d7 weight 0.30 contributes 0.24",
+            "feasibility=0.70 \u00d7 weight 0.25 contributes 0.17"
+          ]
+        },
+        {
+          "agent": "Noor",
+          "role": "Implementation Reviewer",
+          "score": 0.82,
+          "vote": "approve",
+          "reasoning": [
+            "human_benefit=0.90 \u00d7 weight 0.45 contributes 0.41",
+            "safety=0.80 \u00d7 weight 0.30 contributes 0.24",
+            "feasibility=0.70 \u00d7 weight 0.25 contributes 0.17"
+          ]
+        }
+      ],
+      "approval_ratio": 1.0,
+      "average_score": 0.82,
+      "consensus_score": 0.928,
+      "consensus_reached": true
+    }
+  },
+  {
+    "timestamp": "2026-03-13T22:55:23.149564+00:00",
+    "proposal_id": "proposal_demo_001",
+    "vote_result": {
+      "evaluations": [
+        {
+          "agent": "Ada",
+          "role": "Safety Steward",
+          "score": 0.82,
+          "vote": "approve",
+          "reasoning": [
+            "human_benefit=0.90 \u00d7 weight 0.45 contributes 0.41",
+            "safety=0.80 \u00d7 weight 0.30 contributes 0.24",
+            "feasibility=0.70 \u00d7 weight 0.25 contributes 0.17"
+          ]
+        },
+        {
+          "agent": "Lin",
+          "role": "Public Benefit Analyst",
+          "score": 0.82,
+          "vote": "approve",
+          "reasoning": [
+            "human_benefit=0.90 \u00d7 weight 0.45 contributes 0.41",
+            "safety=0.80 \u00d7 weight 0.30 contributes 0.24",
+            "feasibility=0.70 \u00d7 weight 0.25 contributes 0.17"
+          ]
+        },
+        {
+          "agent": "Noor",
+          "role": "Implementation Reviewer",
+          "score": 0.82,
+          "vote": "approve",
+          "reasoning": [
+            "human_benefit=0.90 \u00d7 weight 0.45 contributes 0.41",
+            "safety=0.80 \u00d7 weight 0.30 contributes 0.24",
+            "feasibility=0.70 \u00d7 weight 0.25 contributes 0.17"
+          ]
+        }
+      ],
+      "approval_ratio": 1.0,
+      "average_score": 0.82,
+      "consensus_score": 0.928,
+      "consensus_reached": true
+    }
+  }
+]

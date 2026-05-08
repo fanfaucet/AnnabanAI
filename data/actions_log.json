@@ -1,0 +1,18 @@
+[
+  {
+    "timestamp": "2026-03-13T22:55:15.442486+00:00",
+    "proposal_id": "proposal_demo_001",
+    "final_status": "approved",
+    "consensus_score": 0.928,
+    "needs_human_veto": true,
+    "human_approved": true
+  },
+  {
+    "timestamp": "2026-03-13T22:55:23.149208+00:00",
+    "proposal_id": "proposal_demo_001",
+    "final_status": "approved",
+    "consensus_score": 0.928,
+    "needs_human_veto": true,
+    "human_approved": true
+  }
+]

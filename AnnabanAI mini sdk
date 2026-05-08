@@ -1,0 +1,285 @@
+"""
+AnnabanAI Mini SDK — Societal Internalization Protocol (SIP) Compliant
+Author: AnnabanAI Core Team (updated)
+Version: 1.1
+Date: 2026-03-09
+
+Improvements:
+- Structured, timezone-aware audit entries
+- Thread-safe audit log updates
+- Logging (library-friendly) instead of prints
+- Persistence helpers for audit log
+- Structured return values from run_module
+"""
+
+from __future__ import annotations
+from dataclasses import dataclass, asdict
+from typing import Callable, Dict, Any, List, Optional
+import datetime
+import json
+import threading
+import logging
+import os
+
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler())
+
+
+# -----------------------------
+# Audit Entry
+# -----------------------------
+@dataclass
+class AuditEntry:
+    timestamp: str  # ISO 8601, UTC
+    action: str
+    status: str  # "approved" | "blocked"
+    reason: Optional[str]
+    context: Dict[str, Any]
+
+
+# -----------------------------
+# Core SDK Structures
+# -----------------------------
+class AnnabanOS:
+    def __init__(
+        self,
+        human_override: Callable[[str, Dict[str, Any]], bool],
+        *,
+        log_path: Optional[str] = None,
+        logger_instance: Optional[logging.Logger] = None,
+    ):
+        """
+        human_override: function(action_name, context) -> bool (human approves)
+        log_path: optional path to persist audit log (JSON newline-delimited)
+        logger_instance: optional logging.Logger; defaults to module logger
+        """
+        if not callable(human_override):
+            raise TypeError("human_override must be callable")
+
+        self.human_override = human_override
+        self._audit_log: List[AuditEntry] = []
+        self._lock = threading.Lock()
+        self.log_path = log_path
+
+        if logger_instance is not None:
+            self.logger = logger_instance
+        else:
+            self.logger = logger
+
+    # ----------------------------------
+    # Internal helpers
+    # ----------------------------------
+    def _now_iso(self) -> str:
+        return datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+    def _append_audit(self, entry: AuditEntry) -> None:
+        with self._lock:
+            self._audit_log.append(entry)
+            # Optionally persist incrementally
+            if self.log_path:
+                try:
+                    # Append newline-delimited JSON for easy streaming ingestion
+                    with open(self.log_path, "a", encoding="utf-8") as f:
+                        f.write(json.dumps(asdict(entry), default=str, ensure_ascii=False) + "\n")
+                except Exception as e:
+                    # Persistence must not raise and break the caller flow; log and continue
+                    self.logger.exception("Failed to persist audit entry: %s", e)
+
+    # ----------------------------------
+    # Ethical Action Evaluation
+    # ----------------------------------
+    def evaluate_action(self, action_name: str, context: Dict[str, Any]) -> bool:
+        """
+        Evaluates an action according to SIP rules:
+        - Enforces HADR=1.00 via human override
+        - Prevents explicit harm (context['harm_risk'] True)
+        - Logs audit trail (thread-safe)
+        Returns True if approved, False if blocked.
+        """
+        if not isinstance(action_name, str) or not action_name:
+            raise ValueError("action_name must be a non-empty string")
+        if context is None:
+            context = {}
+
+        # Quick explicit harm check
+        if context.get("harm_risk", False):
+            entry = AuditEntry(
+                timestamp=self._now_iso(),
+                action=action_name,
+                status="blocked",
+                reason="harm risk detected",
+                context=context.copy(),
+            )
+            self._append_audit(entry)
+            self.logger.warning("Action '%s' blocked due to harm risk.", action_name)
+            return False
+
+        # Defer to human override
+        try:
+            approved = bool(self.human_override(action_name, context))
+        except Exception:
+            # If the human override throws, default to blocked and log the exception
+            self.logger.exception("human_override raised an exception; blocking action")
+            approved = False
+
+        status = "approved" if approved else "blocked"
+        reason = None if approved else "human veto"
+
+        entry = AuditEntry(
+            timestamp=self._now_iso(),
+            action=action_name,
+            status=status,
+            reason=reason,
+            context=context.copy(),
+        )
+        self._append_audit(entry)
+
+        if approved:
+            self.logger.info("Action '%s' approved by human override.", action_name)
+        else:
+            self.logger.info("Action '%s' blocked by human override.", action_name)
+
+        return approved
+
+    # ----------------------------------
+    # Safe Module Interface
+    # ----------------------------------
+    def run_module(self, module_name: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Attempts to execute a module action safely, only if human-approved.
+        Returns a structured result dict:
+          { "executed": bool, "message": str, "audit": AuditEntry (as dict) }
+        Library code does not print to stdout by default.
+        """
+        if not isinstance(parameters, dict):
+            raise ValueError("parameters must be a dict")
+
+        approved = self.evaluate_action(module_name, parameters)
+        last_entry = None
+        # Retrieve last audit entry for this action (thread-safe snapshot)
+        with self._lock:
+            if self._audit_log:
+                last_entry = self._audit_log[-1]
+
+        if approved:
+            # In production, call into the real module here. For safety, we only simulate.
+            self.logger.debug("Simulating execution of module '%s' with %s", module_name, parameters)
+            message = f"Module '{module_name}' executed safely."
+            return {"executed": True, "message": message, "audit": asdict(last_entry) if last_entry else None}
+        else:
+            message = f"Module '{module_name}' blocked. See audit log."
+            self.logger.debug("Blocked execution of module '%s'.", module_name)
+            return {"executed": False, "message": message, "audit": asdict(last_entry) if last_entry else None}
+
+    # ----------------------------------
+    # Audit Inspection & Persistence
+    # ----------------------------------
+    def get_audit_log(self) -> List[AuditEntry]:
+        """Return a thread-safe shallow copy of the in-memory audit log (AuditEntry objects)."""
+        with self._lock:
+            return list(self._audit_log)
+
+    def get_audit_log_serializable(self) -> List[Dict[str, Any]]:
+        """Return audit log as list of serializable dicts."""
+        return [asdict(e) for e in self.get_audit_log()]
+
+    def print_audit_log(self) -> None:
+        """Pretty-print audit log entries to the configured logger at INFO level."""
+        for entry in self.get_audit_log():
+            self.logger.info("%s | %s | %s | reason=%s", entry.timestamp, entry.action, entry.status, entry.reason)
+
+    def persist_audit_log(self, path: Optional[str] = None, overwrite: bool = False) -> None:
+        """
+        Persist the in-memory audit log to a JSON file.
+        - If overwrite is False, will append if file exists (safe for logs).
+        - If overwrite is True, will replace the file content with the full audit list.
+        """
+        target = path or self.log_path
+        if not target:
+            raise ValueError("No path provided for persisting audit log")
+
+        mode = "w" if overwrite else "a"
+        try:
+            if overwrite:
+                with open(target, "w", encoding="utf-8") as f:
+                    json.dump(self.get_audit_log_serializable(), f, ensure_ascii=False, indent=2)
+            else:
+                # Append any entries not yet on disk; for simplicity we append all entries newline-delimited
+                with open(target, "a", encoding="utf-8") as f:
+                    for entry in self.get_audit_log_serializable():
+                        f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        except Exception as e:
+            self.logger.exception("Failed to persist audit log to %s: %s", target, e)
+
+    def load_audit_log(self, path: str) -> None:
+        """
+        Load audit entries from a JSON file.
+        Supports two formats:
+          - A JSON array of entries
+          - Newline-delimited JSON objects
+        Entries are appended to the in-memory log.
+        """
+        if not os.path.exists(path):
+            raise FileNotFoundError(path)
+
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                text = f.read().strip()
+                entries: List[Dict[str, Any]] = []
+                if not text:
+                    return
+                if text.startswith("["):
+                    entries = json.loads(text)
+                else:
+                    # newline-delimited JSON
+                    for line in text.splitlines():
+                        if line.strip():
+                            entries.append(json.loads(line))
+                for e in entries:
+                    # minimal validation
+                    entry = AuditEntry(
+                        timestamp=e.get("timestamp", self._now_iso()),
+                        action=e.get("action", "<unknown>"),
+                        status=e.get("status", "blocked"),
+                        reason=e.get("reason"),
+                        context=e.get("context", {}),
+                    )
+                    self._append_audit(entry)  # _append_audit handles lock & optional persistence
+        except Exception as exc:
+            self.logger.exception("Failed to load audit log from %s: %s", path, exc)
+            raise
+
+# -----------------------------
+# Example Usage
+# -----------------------------
+def human_approval(action_name: str, context: Dict[str, Any]) -> bool:
+    """
+    Example human override logic.
+    Always approve safe, non-harmful actions.
+    """
+    if context.get("harm_risk", False):
+        return False
+    # Here you could add policies, whitelists, or interactive approval flows.
+    return True
+
+
+if __name__ == "__main__":
+    # Configure simple logging for demo runs
+    logging.basicConfig(level=logging.INFO)
+
+    # Initialize AnnabanOS SDK with optional persistent log file
+    annaban = AnnabanOS(human_override=human_approval, log_path="annaban_audit.log")
+
+    # Run safe, civic-aligned modules
+    res1 = annaban.run_module("CivicEducationDrive", {"audience": "city", "harm_risk": False})
+    logger.info("Result: %s", res1)
+
+    res2 = annaban.run_module("TerraformMarsSimulation", {"scale": "micro", "harm_risk": False})
+    logger.info("Result: %s", res2)
+
+    # Attempt a blocked action
+    res3 = annaban.run_module("CollapseNebulaForEnergy", {"harm_risk": True})
+    logger.info("Result: %s", res3)
+
+    # Inspect the audit log (printed via logger)
+    annaban.print_audit_log()

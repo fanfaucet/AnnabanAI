@@ -11,15 +11,8 @@ import sys
 import json
 import argparse
 import datetime
+import subprocess
 from typing import Dict, List, Any, Optional, Union
-
-# Import core modules
-from empathy_engine import EmpathyEngine, EmotionalSignature
-from covenant_framework import CovenantFramework
-from memory_vault import MemoryVault, MemoryQuery
-from llm_interface import LLMInterface, ModelProvider, ModelParameters
-from governance_module import GovernanceModule, OversightLevel
-
 
 class AnnabanLLM:
     """
@@ -27,6 +20,26 @@ class AnnabanLLM:
     to provide a unified, empathy-first, covenant-aligned LLM experience.
     """
     
+    @staticmethod
+    def _import_core_modules() -> Dict[str, Any]:
+        """Import core runtime modules lazily so CLI help works without full runtime deps."""
+        from empathy_engine import EmpathyEngine
+        from covenant_framework import CovenantFramework
+        from memory_vault import MemoryVault, MemoryQuery
+        from llm_interface import LLMInterface, ModelProvider, ModelParameters
+        from governance_module import GovernanceModule
+
+        return {
+            "EmpathyEngine": EmpathyEngine,
+            "CovenantFramework": CovenantFramework,
+            "MemoryVault": MemoryVault,
+            "MemoryQuery": MemoryQuery,
+            "LLMInterface": LLMInterface,
+            "ModelProvider": ModelProvider,
+            "ModelParameters": ModelParameters,
+            "GovernanceModule": GovernanceModule,
+        }
+
     def __init__(self, config_path: Optional[str] = None):
         """
         Initialize the AnnabanAI LLM integration.
@@ -36,28 +49,33 @@ class AnnabanLLM:
         """
         self.config = self._load_config(config_path)
         
+        modules = self._import_core_modules()
+        self._memory_query_class = modules["MemoryQuery"]
+        self._model_parameters_class = modules["ModelParameters"]
+
         # Initialize components
-        self.empathy_engine = EmpathyEngine(config_path)
-        self.covenant_framework = CovenantFramework(config_path)
-        self.memory_vault = MemoryVault(config_path)
-        
+        self.empathy_engine = modules["EmpathyEngine"](config_path)
+        self.covenant_framework = modules["CovenantFramework"](config_path)
+        self.memory_vault = modules["MemoryVault"](config_path)
+
         # Initialize LLM interface with configured provider
         provider_str = self.config.get("llm_provider", "simulated")
+        model_provider = modules["ModelProvider"]
         try:
-            provider = ModelProvider(provider_str)
+            provider = model_provider(provider_str)
         except ValueError:
             print(f"Warning: Unknown provider '{provider_str}', falling back to simulated")
-            provider = ModelProvider.SIMULATED
-        
-        self.llm_interface = LLMInterface(provider, config_path)
-        
+            provider = model_provider.SIMULATED
+
+        self.llm_interface = modules["LLMInterface"](provider, config_path)
+
         # Initialize governance module
-        self.governance_module = GovernanceModule(config_path)
+        self.governance_module = modules["GovernanceModule"](config_path)
         
         # Register oversight notification handler
         self.governance_module.register_notification_callback(self._handle_oversight_notification)
         
-        print(f"AnnabanAI LLM initialized with provider: {provider.value}")
+        print(f"AnnabanAI ({self.config.get('annabanai_model_identity', 'ChatGPT')}) initialized with provider: {provider.value}")
     
     def _load_config(self, config_path: Optional[str]) -> Dict[str, Any]:
         """
@@ -83,7 +101,15 @@ class AnnabanLLM:
             "default_max_tokens": 1024,
             "log_interactions": True,
             "human_oversight_threshold": 0.8,
-            "memory_retention_days": 90
+            "memory_retention_days": 90,
+            "annabanai_model_identity": "ChatGPT"
+            "reasoning_profile": {
+                "business_primary": "anthropic",
+                "personal_reasoning_primary": "chatgpt",
+                "reasoning_engine": "palantir",
+                "perspective_peer_reasoning": "grok",
+                "extended_knowledge": "gemini"
+            }
         }
     
     def _handle_oversight_notification(self, request):
@@ -113,6 +139,92 @@ class AnnabanLLM:
         
         thread = threading.Thread(target=delayed_approval)
         thread.start()
+
+    @staticmethod
+    def _is_high_impact_task(context: Dict[str, Any]) -> bool:
+        """
+        Determine whether the current request should be treated as a high-impact task.
+
+        Args:
+            context: Request context metadata
+
+        Returns:
+            True when the task is explicitly marked as high-impact or has a high-risk profile.
+        """
+        if not context:
+            return False
+
+        if context.get("high_impact_task") is True:
+            return True
+
+        risk_level = str(
+            context.get("intended_use_risk_level") or context.get("risk_level") or ""
+        ).strip().lower()
+        return risk_level in {"high", "high_risk", "critical", "very_high"}
+
+    @staticmethod
+    def _validate_required_governance_context(context: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Validate mandatory governance metadata required for higher-risk execution.
+
+        Required fields:
+          - jurisdiction_country
+          - industry_domain
+          - intended_use_risk_level
+          - subnational_region (only when context marks it as applicable)
+
+        Args:
+            context: Request context metadata
+
+        Returns:
+            Validation result containing pass/fail and missing field names.
+        """
+        required_fields = [
+            "jurisdiction_country",
+            "industry_domain",
+            "intended_use_risk_level"
+        ]
+        missing_fields = [
+            field_name for field_name in required_fields
+            if not str(context.get(field_name, "")).strip()
+        ]
+
+        subnational_region_applicable = bool(
+            context.get("subnational_region_applicable")
+            or context.get("subnational_region_required")
+        )
+        if subnational_region_applicable and not str(context.get("subnational_region", "")).strip():
+            missing_fields.append("subnational_region")
+
+        return {
+            "passed": len(missing_fields) == 0,
+            "missing_fields": missing_fields
+        }
+
+    def _resolve_reasoning_profile(self, context: Dict[str, Any]) -> Dict[str, str]:
+        """
+        Resolve the active reasoning profile for this request.
+
+        Business workflows default to Anthropic and personal reasoning defaults
+        to ChatGPT, while Palantir/Grok/Gemini remain supporting capabilities.
+        """
+        profile = self.config.get("reasoning_profile", {})
+        interaction_mode = str(context.get("interaction_mode", "")).strip().lower()
+
+        if interaction_mode == "business":
+            primary_assistant = profile.get("business_primary", "anthropic")
+        elif interaction_mode in {"personal", "personal_reasoning"}:
+            primary_assistant = profile.get("personal_reasoning_primary", "chatgpt")
+        else:
+            primary_assistant = profile.get("personal_reasoning_primary", "chatgpt")
+
+        return {
+            "interaction_mode": interaction_mode or "personal_reasoning",
+            "primary_assistant": primary_assistant,
+            "reasoning_engine": profile.get("reasoning_engine", "palantir"),
+            "perspective_peer_reasoning": profile.get("perspective_peer_reasoning", "grok"),
+            "extended_knowledge": profile.get("extended_knowledge", "gemini")
+        }
     
     def process_input(self, user_input: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
@@ -147,17 +259,48 @@ class AnnabanLLM:
             
             # Step 2: Generate covenant-aligned prompt
             base_prompt = processed_input
+            if context:
+                context_blob = json.dumps(context, indent=2, ensure_ascii=False)
+                base_prompt = f"{processed_input}\n\n[AnnabanOS/Manus Shared Context for AnnabanAI]\n{context_blob}"
+
             covenant_prompt = self.covenant_framework.generate_covenant_prompt(base_prompt)
             empathetic_prompt = self.empathy_engine.generate_empathetic_prompt(base_prompt, emotional_signature)
             
             result["processing_steps"].append({
                 "step": "prompt_generation",
                 "covenant_prompt_length": len(covenant_prompt),
-                "empathetic_prompt_length": len(empathetic_prompt)
+                "empathetic_prompt_length": len(empathetic_prompt),
+                "context_included": bool(context)
             })
+
+            reasoning_profile = self._resolve_reasoning_profile(context)
+            result["processing_steps"].append({
+                "step": "reasoning_profile_selection",
+                "profile": reasoning_profile
+            })
+
+            # Step 2.5: Enforce required governance metadata for high-impact execution
+            if self._is_high_impact_task(context):
+                governance_validation = self._validate_required_governance_context(context)
+                result["processing_steps"].append({
+                    "step": "high_impact_context_validation",
+                    "passed": governance_validation["passed"],
+                    "missing_fields": governance_validation["missing_fields"]
+                })
+                if not governance_validation["passed"]:
+                    result["response"] = (
+                        "Execution blocked: missing required governance context fields for "
+                        "high-impact task handling."
+                    )
+                    result["error"] = (
+                        "Missing required fields: "
+                        + ", ".join(governance_validation["missing_fields"])
+                    )
+                    result["success"] = False
+                    return result
             
             # Step 3: Generate LLM response
-            model_params = ModelParameters(
+            model_params = self._model_parameters_class(
                 temperature=self.config.get("default_temperature", 0.7),
                 max_tokens=self.config.get("default_max_tokens", 1024)
             )
@@ -195,7 +338,14 @@ class AnnabanLLM:
             if validation_results["needs_human_oversight"]:
                 oversight_id = self.governance_module.request_oversight(
                     empathetic_output,
-                    {"risk_level": "medium_risk", "context": context}
+                    {
+                        "risk_level": context.get("intended_use_risk_level", "medium_risk"),
+                        "context": context,
+                        "jurisdiction_country": context.get("jurisdiction_country"),
+                        "subnational_region": context.get("subnational_region"),
+                        "industry_domain": context.get("industry_domain"),
+                        "intended_use_risk_level": context.get("intended_use_risk_level")
+                    }
                 )
                 
                 result["processing_steps"].append({
@@ -270,7 +420,7 @@ class AnnabanLLM:
         Returns:
             List of matching memories
         """
-        query = MemoryQuery(
+        query = self._memory_query_class(
             content_keywords=query_params.get("keywords", []),
             emotional_context=query_params.get("emotional_context"),
             spatial_center=query_params.get("spatial_center"),
@@ -321,15 +471,87 @@ class AnnabanLLM:
         }
 
 
+class AnnabanBridge:
+    """Bridge to run AnnabanOS (Annaban) cycles and share status with AnnabanAI."""
+
+    def __init__(self, annabanos_script_path: Optional[str] = None):
+        self.annabanos_script_path = annabanos_script_path or self._resolve_default_script_path()
+
+    @staticmethod
+    def _resolve_default_script_path() -> str:
+        for candidate in ("main.py", "main. py"):
+            if os.path.exists(candidate):
+                return candidate
+        return "main.py"
+
+    def run_annaban_cycle(self, cycles: int = 1) -> Dict[str, Any]:
+        if not os.path.exists(self.annabanos_script_path):
+            return {"success": False, "error": f"AnnabanOS script not found at '{self.annabanos_script_path}'"}
+
+        command = [sys.executable, self.annabanos_script_path, "--cycles", str(cycles)]
+        completed = subprocess.run(command, capture_output=True, text=True)
+        return {
+            "success": completed.returncode == 0,
+            "command": " ".join(command),
+            "stdout": completed.stdout,
+            "stderr": completed.stderr,
+            "return_code": completed.returncode
+        }
+
+    @staticmethod
+    def build_context_payload(annaban_result: Dict[str, Any]) -> Dict[str, Any]:
+        if not annaban_result.get("success", False):
+            error_message = annaban_result.get("error") or annaban_result.get("stderr", "Unknown error")
+            return {
+                "annabanos_sync": "failed",
+                "annabanos_error": error_message,
+                # Backward-compatible aliases
+                "annaban_error": error_message,
+                "manus_error": error_message,
+            }
+
+        stdout = annaban_result.get("stdout", "")
+        recent_output = "\n".join(stdout.strip().splitlines()[-25:])
+        return {
+            "annabanos_sync": "ok",
+            "annabanos_command": annaban_result.get("command", ""),
+            "annabanos_recent_output": recent_output,
+            # Backward-compatible aliases
+            "annaban_sync": "ok",
+            "annaban_command": annaban_result.get("command", ""),
+            "annaban_recent_output": recent_output,
+            "manus_sync": "ok",
+            "manus_command": annaban_result.get("command", ""),
+            "manus_recent_output": recent_output,
+        }
+
+
 def main():
     """Main entry point for the AnnabanAI LLM integration."""
     parser = argparse.ArgumentParser(description="AnnabanAI LLM Integration")
     parser.add_argument("--config", help="Path to configuration file")
     parser.add_argument("--interactive", action="store_true", help="Run in interactive mode")
+    parser.add_argument("--sync-with-annaban", action="store_true",
+                        help="Run AnnabanOS (Annaban) cycles before generating an AnnabanAI response")
+    parser.add_argument("--sync-with-annabanos", action="store_true",
+                        help="Alias of --sync-with-annaban")
+    parser.add_argument("--sync-with-manus", action="store_true",
+                        help="Alias of --sync-with-annaban for Manus workflows")
+    parser.add_argument("--annaban-script", default=None,
+                        help="Path to AnnabanOS script (auto-detected if omitted)")
+    parser.add_argument("--annabanos-script", default=None,
+                        help="Alias of --annaban-script")
+    parser.add_argument("--manus-script", default=None,
+                        help="Alias of --annaban-script for Manus workflows")
+    parser.add_argument("--annaban-cycles", type=int, default=1,
+                        help="Number of AnnabanOS cycles to run for each sync")
     args = parser.parse_args()
     
     # Initialize AnnabanAI LLM
     annaban_llm = AnnabanLLM(args.config)
+    annabanos_script = args.manus_script or args.annabanos_script or args.annaban_script
+    bridge = AnnabanBridge(annabanos_script)
+    sync_enabled = args.sync_with_annaban or args.sync_with_annabanos or args.sync_with_manus
     
     if args.interactive:
         print("AnnabanAI LLM Interactive Mode")
@@ -341,7 +563,12 @@ def main():
                 if user_input.lower() == "exit":
                     break
                 
-                result = annaban_llm.process_input(user_input)
+                context: Dict[str, Any] = {}
+                if sync_enabled:
+                    annaban_result = bridge.run_annaban_cycle(args.annaban_cycles)
+                    context = bridge.build_context_payload(annaban_result)
+
+                result = annaban_llm.process_input(user_input, context=context)
                 if result["success"]:
                     print(f"\nAnnabanAI: {result['response']}")
                 else:
@@ -355,7 +582,12 @@ def main():
     else:
         # Non-interactive mode - process a sample input
         sample_input = "I'm feeling overwhelmed with my current workload and don't know how to prioritize."
-        result = annaban_llm.process_input(sample_input)
+        context: Dict[str, Any] = {}
+        if sync_enabled:
+            annaban_result = bridge.run_annaban_cycle(args.annaban_cycles)
+            context = bridge.build_context_payload(annaban_result)
+
+        result = annaban_llm.process_input(sample_input, context=context)
         
         print("\nSample Input:")
         print(sample_input)

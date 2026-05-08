@@ -2,6 +2,8 @@
 
 AnnabanAI provides the reflection and conversational capabilities in AnnabanOS Enhanced. The main pieces used in `main.py` are imported from `annabanai`:
 
+AnnabanAI is the conversational user agent in this system, represented by `ConversationalUserAgent` and modeled as ChatGPT behavior in user-facing interactions.
+
 - `reflect` and `update_portfolio`: record reflections and achievements
 - `EchoLoop`: structured reflection system
 - `ConversationalUserAgent`: an agent that can converse with users
@@ -44,3 +46,22 @@ cua.earn_tokens(50, "Initial allocation")
 `main.py` uses these functions and classes to seed reflections and portfolio entries during environment setup and simulation cycles. See:
 - `create_demo_environment()` for initial reflections and portfolio updates
 - `run_simulation()` for periodic reflections
+
+## Running AnnabanOS + AnnabanAI Together
+Use `Main.py` with sync flags to run AnnabanOS (Annaban) cycles first and pass recent AnnabanOS/Manus output into the AnnabanAI prompt context:
+
+```bash
+python Main.py --interactive --sync-with-annabanos --annaban-cycles 1
+```
+
+In this mode, AnnabanAI receives a structured context payload (`annabanos_sync`, command, and recent output lines) before response generation. Backward-compatible `annaban_*` and `manus_*` keys are also included.
+
+
+## Manus + AnnabanAI
+Manus works with AnnabanAI through the same synchronization bridge used for AnnabanOS. Use Manus alias flags when that naming is more natural for your workflow:
+
+```bash
+python Main.py --interactive --sync-with-manus --manus-script "main.py" --annaban-cycles 1
+```
+
+AnnabanAI identifies as ChatGPT in runtime metadata (`annabanai_model_identity`) unless overridden in config.

@@ -1,0 +1,16 @@
+{
+  "theme": "aurora",
+  "shortcuts": {
+    "dashboard": "open dashboard",
+    "reminders": "show reminders"
+  },
+  "ai": {
+    "tone": "supportive",
+    "suggestions_enabled": true,
+    "automation_level": "advisory"
+  },
+  "enabled_modules": [
+    "notifications",
+    "ai_suggestions"
+  ]
+}

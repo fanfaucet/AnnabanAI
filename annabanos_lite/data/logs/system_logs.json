@@ -1,0 +1,12 @@
+[
+  {
+    "level": "info",
+    "message": "[notifications] Notification module ready",
+    "timestamp": "2026-03-18T05:45:52.279229"
+  },
+  {
+    "level": "info",
+    "message": "Boot completed for user default",
+    "timestamp": "2026-03-18T05:45:52.280572"
+  }
+]
