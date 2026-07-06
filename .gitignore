@@ -15,4 +15,3 @@ __pycache__/
 # Local build artifacts
 node_modules/
 .gradle/
-.env
