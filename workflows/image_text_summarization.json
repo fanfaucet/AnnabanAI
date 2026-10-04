@@ -1,0 +1,65 @@
+{
+  "workflowName": "image_text_summarization",
+  "version": "1.0.0",
+  "status": "default",
+  "description": "Extract text from a user-uploaded image and generate a human-readable summary with auditable compliance gates.",
+  "steps": [
+    {
+      "id": "step1",
+      "provider": "OpenAI",
+      "capability": "vision_ocr",
+      "action": "extract_text",
+      "enabled": true,
+      "input": { "image": "user_upload" },
+      "output": { "text": "extracted_text" },
+      "external_effect": false
+    },
+    {
+      "id": "step2",
+      "provider": "Hugging Face",
+      "capability": "text_classification",
+      "action": "classify",
+      "enabled": true,
+      "input": { "text": "${step1.output.text}" },
+      "output": { "categories": "classified_text" },
+      "external_effect": false
+    },
+    {
+      "id": "step3",
+      "provider": "OpenAI",
+      "capability": "reasoning_summarization",
+      "action": "summarize",
+      "enabled": true,
+      "input": {
+        "text": "${step1.output.text}",
+        "context": "${step2.output.categories}"
+      },
+      "output": { "summary": "final_summary" },
+      "external_effect": false
+    },
+    {
+      "id": "step4",
+      "provider": "Azure Cognitive Services",
+      "capability": "vision_ocr",
+      "action": "extract_text",
+      "enabled": false,
+      "mode": "restricted",
+      "reason": "Transparency compliance review pending",
+      "input": { "image": "user_upload" },
+      "output": { "text": "azure_extracted_text" },
+      "external_effect": false
+    }
+  ],
+  "compliance": {
+    "restrictNonTransparentApis": true,
+    "auditableLogs": true,
+    "dataPrivacyEnforced": true,
+    "humanAuthorizationForExternalEffects": true,
+    "requireCapabilityVerification": true
+  },
+  "governance": {
+    "modelConfidenceIsNotAuthority": true,
+    "externalEffectDefault": false,
+    "failClosedOnUnavailableCapability": true
+  }
+}
