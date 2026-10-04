@@ -1,12 +1,108 @@
 # ChatGPT-style AI System Specification for AnnabanAI
 
-This document outlines the comprehensive specification for integrating a ChatGPT-style AI system into the AnnabanAI framework, focusing on modularity, scalability, and safety. The design incorporates advanced transformer architectures, multi-stage training pipelines, robust alignment and safety mechanisms, and a production-ready inference system.
+This document outlines the comprehensive specification for integrating a ChatGPT-style AI system into the AnnabanAI framework, focusing on modularity, scalability, safety, and explicit capability boundaries.
+
+## 0. Current Capability Contract
+
+The capability inventory below is the default reference for describing an AI assistant integrated with AnnabanAI. Capabilities are classified by what the model can reason about versus what the active runtime, tools, permissions, and connected services actually expose.
+
+### 0.1 Core AI Capabilities
+
+* **Natural-language understanding (NLU)**: Interpret text, lists, commands, questions, structured prompts, and conversational context.
+* **Natural-language generation (NLG)**: Produce structured and unstructured text across requested tones, lengths, and formats.
+* **Multi-step reasoning**: Analyze complex problems, compare alternatives, derive conclusions, and construct implementation plans.
+* **Instruction following**: Apply system, developer, and user constraints subject to higher-priority safety and governance rules.
+
+### 0.2 Research and Knowledge
+
+* **General model knowledge**: Use information represented in the model's training and system context. Do not represent a fixed training cutoff as the complete knowledge boundary of the deployed assistant.
+* **Current web research**: When web access is enabled and appropriate, retrieve current information from external sources and provide source citations.
+* **Source verification**: Distinguish model knowledge from externally retrieved evidence and identify uncertainty where verification is incomplete.
+* **No implicit real-time access**: Web access, APIs, databases, and connected services are runtime capabilities, not properties that should be assumed for every deployment.
+
+### 0.3 Content and Software Engineering
+
+* **Writing and transformation**: Draft, rewrite, translate, summarize, proofread, and structure reusable text artifacts.
+* **Code generation**: Generate implementation-ready code in supported languages and frameworks.
+* **Code analysis**: Review code, identify defects, propose fixes, and reason about architecture and tests.
+* **Technical documentation**: Produce specifications, API descriptions, configuration examples, and implementation guidance.
+
+### 0.4 Data and Computation
+
+* **Mathematics and logic**: Perform calculations, formal reasoning, and quantitative comparisons.
+* **Programmatic data analysis**: When a computation runtime is available, analyze datasets, calculate metrics, and generate tables or visualizations.
+* **File-based analysis**: When file access is available, inspect supported uploaded or connected documents and use their contents as evidence.
+* **Economic analysis**: Estimate costs, benefits, margins, opportunity costs, and other economic effects when the required assumptions and data are available.
+
+### 0.5 Multimodal Capabilities
+
+* **Image understanding**: Analyze supplied images, screenshots, diagrams, and other supported visual inputs.
+* **Document visualization**: Inspect visual content embedded in supported PDFs and documents when the document/file runtime exposes those assets.
+* **Image generation or transformation**: Generate or transform images when the image-generation runtime is enabled.
+* **Capability boundary**: Multimodal functions must not be described as universally available merely because a particular deployment exposes them.
+
+### 0.6 Languages
+
+* **Multilingual understanding**: Process many natural languages and mixed-language inputs.
+* **Translation**: Translate supported text while preserving meaning, structure, and requested tone.
+* **Language capability is deployment-dependent**: Quality varies by language, domain, and model configuration.
+
+### 0.7 Local and External Services
+
+* **Local search**: Search for current businesses, restaurants, hotels, and other places when the appropriate location/search service is enabled.
+* **External integrations**: Interact with connected applications or services only when the corresponding integration is installed, authorized, and available to the runtime.
+* **Automation**: Create or manage scheduled monitoring and reminders only when the automation service is available and the user has authorized the requested action.
+* **Location awareness**: Do not claim precise user location unless the runtime explicitly supplies it and the user has authorized its use.
+
+### 0.8 Specialized Domains
+
+The assistant can provide general analysis across domains including:
+
+* Healthcare and medicine
+* Law and legal documents
+* Finance and business
+* Education
+* Science and engineering
+* Cybersecurity and defense
+* Aerospace and space systems
+
+Domain-specific output must distinguish informational analysis from professional authority and should identify material uncertainty or missing evidence.
+
+## 0.9 Capability Registry Rule
+
+AnnabanAI integrations SHOULD represent capabilities using the following fields:
+
+| Field | Meaning |
+|---|---|
+| `capability` | Stable capability identifier |
+| `description` | Human-readable function |
+| `provider` | Model, tool, service, or integration providing it |
+| `availability` | Whether it is available in the current runtime |
+| `permission` | Required permission or authorization |
+| `evidence` | Test, tool result, or documented interface establishing availability |
+| `limitations` | Known restrictions or deployment dependencies |
+| `external_effect` | Whether execution can affect an external system |
+| `human_authorization` | Whether human approval is required before external effect |
+
+A capability claim MUST NOT be interpreted as proof that the capability is currently enabled. AnnabanAI should verify runtime availability before routing work to a capability.
+
+## 0.10 Governance Boundary
+
+The assistant is an analysis and orchestration component, not an autonomous authority.
+
+* **MODEL_CONFIDENCE != AUTHORITY**
+* Tool availability != permission to act.
+* Analysis != authorization.
+* External effects require the applicable governance gate.
+* Human authorization remains the controlling boundary for consequential external actions.
+
+The capability registry therefore separates **what an AI system can conceptually do** from **what this deployment is permitted and technically able to do**.
 
 ## 1. System Architecture
 
-### 1.1 Foundation Model Design
-
 The core of the AnnabanAI system will be a transformer-based foundation model, specifically designed with a decoder-only architecture for causal language modeling. This architecture is chosen for its effectiveness in generating coherent and contextually relevant text. The model will be scalable in depth and width, aiming for a multi-billion parameter class to achieve state-of-the-art performance.
+
+### 1.1 Foundation Model Design
 
 Key architectural components include:
 
@@ -28,15 +124,15 @@ The foundation model will comprise several key components:
 
 ### 1.3 Data Flow Through the Model
 
-1.  **Input Tokenization**: Raw text input is converted into a sequence of numerical tokens.
-2.  **Embedding**: Tokens are transformed into vector embeddings, combined with positional embeddings.
-3.  **Decoder Layers**: The embedded sequence passes through multiple decoder blocks. Each block performs:
-    *   **Masked Multi-Head Self-Attention**: Allows tokens to attend to all previous tokens in the sequence.
-    *   **Add & Norm**: Residual connections and layer normalization.
-    *   **Feed-Forward Network**: A two-layer MLP with an activation function.
-    *   **Add & Norm**: Another set of residual connections and layer normalization.
-4.  **Output Layer**: The final hidden states are projected to a vocabulary-sized logits vector.
-5.  **Softmax**: Logits are converted into probability distributions over the vocabulary, from which the next token is sampled.
+1. **Input Tokenization**: Raw text input is converted into a sequence of numerical tokens.
+2. **Embedding**: Tokens are transformed into vector embeddings, combined with positional embeddings.
+3. **Decoder Layers**: The embedded sequence passes through multiple decoder blocks. Each block performs:
+   * **Masked Multi-Head Self-Attention**: Allows tokens to attend to all previous tokens in the sequence.
+   * **Add & Norm**: Residual connections and layer normalization.
+   * **Feed-Forward Network**: A two-layer MLP with an activation function.
+   * **Add & Norm**: Another set of residual connections and layer normalization.
+4. **Output Layer**: The final hidden states are projected to a vocabulary-sized logits vector.
+5. **Softmax**: Logits are converted into probability distributions over the vocabulary, from which the next token is sampled.
 
 ## 2. Training Pipeline
 
@@ -74,7 +170,7 @@ Robust mechanisms will be in place to ensure the AI system operates safely and e
 
 ### 3.1 Core Mechanisms
 
-*   **Content moderation (input/output filtering)**: Automated systems to detect and filter out harmful content in both user inputs and model outputs.
+*   **Content moderation (input/output filtering)**: Automated systems to detect and filter harmful content in both user inputs and model outputs.
 *   **Refusal strategies**: Clearly defined protocols for the model to refuse inappropriate requests, maintaining helpfulness while upholding safety.
 *   **Policy layers for safe completion**: Integration of rules and guidelines that govern the model's behavior, ensuring outputs adhere to ethical standards.
 *   **Bias mitigation strategies**: Techniques to identify and reduce biases present in training data and model outputs.
@@ -83,7 +179,7 @@ Robust mechanisms will be in place to ensure the AI system operates safely and e
 
 ### 3.2 Safety Framework
 
-*   **Safety taxonomy**: A classification system for defining and categorizing different types of harmful content or behaviors (e.g., harmless, helpful, honest).
+*   **Safety taxonomy**: A classification system for defining and categorizing different types of harmful content or behaviors.
 *   **Guardrail enforcement approach**: The methodology for applying and enforcing safety policies throughout the model's operation.
 *   **Evaluation framework for safety compliance**: A systematic approach to assess the model's adherence to safety guidelines and identify areas for improvement.
 
@@ -113,8 +209,8 @@ The AI model will be capable of integrating with external tools and orchestratin
 ### 5.1 Tool Integration
 
 *   **Function calling / tool invocation schema**: A defined protocol for the model to identify when and how to call external functions or tools.
-*   **Retrieval-Augmented Generation (RAG)**: Integrates external knowledge bases to provide the model with up-to-date and factual information, reducing hallucinations.
-*   **External API access**: Enables the model to interact with various external services and APIs.
+*   **Retrieval-Augmented Generation (RAG)**: Integrates external knowledge bases to provide access to current and task-specific information, reducing reliance on static model knowledge.
+*   **External API access**: Enables the model to interact with various external services and APIs when authorized.
 *   **Multi-step reasoning loops**: Allows the model to break down complex problems into smaller steps and execute them sequentially.
 *   **Agent-based orchestration patterns**: Utilizes agentic frameworks to manage and coordinate multiple AI components or tools to achieve a larger goal.
 
@@ -189,4 +285,5 @@ The output of the AI system will adhere to the following format guidelines:
 *   The training and alignment pipeline is clearly defined and reproducible.
 *   Safety mechanisms are integrated at multiple layers, ensuring robust protection.
 *   The inference system is production-ready, capable of handling real-world demands.
+*   Capability claims are explicit about runtime availability, permissions, evidence, and limitations.
 *   The design reflects the real-world constraints of large-scale AI systems.
