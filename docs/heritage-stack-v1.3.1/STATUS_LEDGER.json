@@ -3,8 +3,8 @@
   "document_control_id": "HS-ATTRIBUTION-REVIEW-RECON-20261016",
   "project": "AnnabanAI / Heritage Stack v1.3.1",
   "record_type": "gate_1_reconciliation_record",
-  "record_timestamp_utc": "2026-10-16T00:00:00Z",
-  "timestamp_note": "Documentation record date only; not a cryptographically attested event timestamp.",
+  "record_date_utc": "2026-10-16",
+  "timestamp_note": "Date-only documentation record; no precise event timestamp is asserted."
   "attribution": {
     "project_originator_and_attributed_architect": "Jacob Wayne Kinnaird",
     "handle": "faucet_fan",
