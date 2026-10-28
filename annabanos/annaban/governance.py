@@ -30,9 +30,15 @@ class AnnabanGovernance:
         self.divergence_threshold = divergence_threshold
         self.freeze_retries = freeze_retries
 
-    def _is_high_risk(self, text: str) -> bool:
-        pattern = r"\b(" + "|".join(map(re.escape, self.HIGH_RISK_KEYWORDS)) + r")\b"
+    @classmethod
+    def is_high_risk_prompt(cls, text: str) -> bool:
+        """Public, side-effect-free preflight check for API adapters."""
+        pattern = r"\\b(" + "|".join(map(re.escape, cls.HIGH_RISK_KEYWORDS)) + r")\\b"
         return bool(re.search(pattern, text, flags=re.IGNORECASE))
+
+    def _is_high_risk(self, text: str) -> bool:
+        """Backward-compatible instance wrapper for existing callers."""
+        return self.is_high_risk_prompt(text)
 
     @staticmethod
     def _score_output(node_output: Dict[str, Any]) -> float:
