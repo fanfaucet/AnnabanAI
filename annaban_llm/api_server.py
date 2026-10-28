@@ -15,6 +15,8 @@ from typing import Any, AsyncIterator, Literal
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.responses import StreamingResponse
+from annabanos.annaban.governance import AnnabanGovernance
+from annabanos.annaban.ledger import GovernanceLedger
 from pydantic import BaseModel, Field, ConfigDict
 
 APP_VERSION = "0.1.0"
@@ -123,6 +125,67 @@ def _client():
     return AsyncOpenAI(**kwargs)
 
 
+def _user_prompt(request: ChatRequest) -> str:
+    return "\\n".join(message.content for message in request.messages if message.role == "user")
+
+
+def _ledger() -> GovernanceLedger:
+    path = os.getenv("ANNABAN_GOVERNANCE_LEDGER_PATH", "logs/governance_ledger.jsonl")
+    return GovernanceLedger(ledger_path=path)
+
+
+def _audit_event(
+    action: str,
+    status: str,
+    request: ChatRequest,
+    *,
+    risk_flagged: bool = False,
+    requires_approval: bool = False,
+    response_marker: str = "[REDACTED]",
+) -> None:
+    """Write governance metadata without retaining user prompts or model output."""
+    try:
+        _ledger().append(
+            action=action,
+            status=status,
+            notes="Prompt and response content redacted by API privacy policy.",
+            prompt="[REDACTED]",
+            response=response_marker,
+            risk_flagged=risk_flagged,
+            requires_approval=requires_approval,
+            governance_output={
+                "request_id": request.conversation_id,
+                "policy": "AnnabanGovernance",
+                "content_retained": False,
+            },
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail="Governance audit ledger unavailable; request stopped.") from exc
+
+
+def _preflight(request: ChatRequest, action: str) -> None:
+    """Fail closed on the repository's high-risk keyword policy before provider calls."""
+    prompt = _user_prompt(request)
+    if AnnabanGovernance.is_high_risk_prompt(prompt):
+        _audit_event(
+            action,
+            "blocked",
+            request,
+            risk_flagged=True,
+            requires_approval=True,
+            response_marker="[HUMAN APPROVAL REQUIRED]",
+        )
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "status": "human_approval_required",
+                "message": AnnabanGovernance.APPROVAL_MESSAGE,
+                "policy": "HIGH_RISK_KEYWORD_GATE",
+            },
+        )
+    _audit_event(action, "started", request)
+
+
 def _provider_messages(request: ChatRequest) -> list[dict[str, str]]:
     system = TEMPO_MODES[request.tempo_mode]
     if request.preserve_agency:
@@ -177,6 +240,7 @@ async def covenant() -> dict[str, Any]:
 
 @app.post("/api/v1/chat/completions", response_model=ChatResponse, dependencies=[Depends(authorize)], tags=["chat"])
 async def chat_completions(request: ChatRequest) -> ChatResponse:
+    _preflight(request, "chat_completions")
     client = _client()
     started = time.perf_counter()
     try:
@@ -187,6 +251,7 @@ async def chat_completions(request: ChatRequest) -> ChatResponse:
             temperature=request.temperature,
         )
     except Exception as exc:
+        _audit_event("chat_completions", "failed", request, response_marker="[PROVIDER ERROR]")
         # Do not leak provider details, credentials, or prompt content to callers.
         raise HTTPException(status_code=502, detail="Model provider request failed.") from exc
     elapsed_ms = round((time.perf_counter() - started) * 1000)
@@ -199,6 +264,7 @@ async def chat_completions(request: ChatRequest) -> ChatResponse:
         provider=os.getenv("OPENAI_BASE_URL", "openai"),
         model=MODEL_NAME,
     )
+    _audit_event("chat_completions", "completed", request, response_marker="[GENERATED; CONTENT NOT RETAINED]")
     return ChatResponse(
         id=response_id,
         conversation_id=request.conversation_id or uuid.uuid4().hex,
@@ -211,6 +277,7 @@ async def chat_completions(request: ChatRequest) -> ChatResponse:
 
 @app.post("/api/v1/chat/stream", dependencies=[Depends(authorize)], tags=["chat"])
 async def chat_stream(request: ChatRequest) -> StreamingResponse:
+    _preflight(request, "chat_stream")
     client = _client()
 
     async def events() -> AsyncIterator[str]:
@@ -240,7 +307,20 @@ async def chat_stream(request: ChatRequest) -> StreamingResponse:
 
 @app.post("/api/v1/chat/feedback", status_code=202, dependencies=[Depends(authorize)], tags=["feedback"])
 async def feedback(request: FeedbackRequest) -> dict[str, Any]:
-    # Prototype intentionally does not persist feedback. Add a consented, retention-defined store before production.
+    # Feedback text is not persisted; only a redacted governance event is recorded.
+    try:
+        _ledger().append(
+            action="chat_feedback",
+            status="accepted",
+            notes="Feedback accepted but not persisted.",
+            prompt="[REDACTED]",
+            response="[FEEDBACK NOT RETAINED]",
+            risk_flagged=False,
+            requires_approval=False,
+            governance_output={"response_id": request.response_id, "rating": request.rating, "content_retained": False},
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail="Governance audit ledger unavailable; feedback not accepted.") from exc
     return {
         "accepted": True,
         "response_id": request.response_id,
