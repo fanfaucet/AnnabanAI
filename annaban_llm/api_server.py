@@ -293,8 +293,13 @@ async def chat_stream(request: ChatRequest) -> StreamingResponse:
                 delta = chunk.choices[0].delta.content if chunk.choices else None
                 if delta:
                     yield "data: " + json.dumps({"delta": delta}, ensure_ascii=False) + "\n\n"
+            _audit_event("chat_stream", "completed", request, response_marker="[STREAMED; CONTENT NOT RETAINED]")
             yield "data: [DONE]\n\n"
         except Exception:
+            try:
+                _audit_event("chat_stream", "failed", request, response_marker="[PROVIDER ERROR]")
+            except HTTPException:
+                pass
             # Avoid sending provider exceptions or sensitive request data over SSE.
             yield "event: error\ndata: " + json.dumps({"detail": "Model provider stream failed."}) + "\n\n"
 
@@ -303,7 +308,6 @@ async def chat_stream(request: ChatRequest) -> StreamingResponse:
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )
-
 
 @app.post("/api/v1/chat/feedback", status_code=202, dependencies=[Depends(authorize)], tags=["feedback"])
 async def feedback(request: FeedbackRequest) -> dict[str, Any]:
