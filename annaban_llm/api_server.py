@@ -163,6 +163,14 @@ def _audit_event(
         raise HTTPException(status_code=503, detail="Governance audit ledger unavailable; request stopped.") from exc
 
 
+def _client_for_request(request: ChatRequest, action: str):
+    try:
+        return _client()
+    except HTTPException:
+        _audit_event(action, "failed", request, response_marker="[PROVIDER UNAVAILABLE]")
+        raise
+
+
 def _preflight(request: ChatRequest, action: str) -> None:
     """Fail closed on the repository's high-risk keyword policy before provider calls."""
     prompt = _user_prompt(request)
@@ -241,7 +249,7 @@ async def covenant() -> dict[str, Any]:
 @app.post("/api/v1/chat/completions", response_model=ChatResponse, dependencies=[Depends(authorize)], tags=["chat"])
 async def chat_completions(request: ChatRequest) -> ChatResponse:
     _preflight(request, "chat_completions")
-    client = _client()
+    client = _client_for_request(request, "chat_completions")
     started = time.perf_counter()
     try:
         result = await client.chat.completions.create(
@@ -278,7 +286,7 @@ async def chat_completions(request: ChatRequest) -> ChatResponse:
 @app.post("/api/v1/chat/stream", dependencies=[Depends(authorize)], tags=["chat"])
 async def chat_stream(request: ChatRequest) -> StreamingResponse:
     _preflight(request, "chat_stream")
-    client = _client()
+    client = _client_for_request(request, "chat_stream")
 
     async def events() -> AsyncIterator[str]:
         try:
