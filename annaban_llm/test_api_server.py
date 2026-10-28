@@ -51,14 +51,18 @@ def test_chat_returns_unmeasured_metrics_and_provenance(monkeypatch):
     assert body["metadata"]["provenance"]["evidence_status"] == "generated_not_independently_verified"
 
 
-def test_provider_unconfigured_returns_503(monkeypatch):
+def test_provider_unconfigured_returns_503(monkeypatch, tmp_path):
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    ledger_path = tmp_path / "governance.jsonl"
+    monkeypatch.setenv("ANNABAN_GOVERNANCE_LEDGER_PATH", str(ledger_path))
     with TestClient(api_server.app) as client:
         response = client.post(
             "/api/v1/chat/completions",
             json={"messages": [{"role": "user", "content": "Hello"}]},
         )
     assert response.status_code == 503
+    events = [json.loads(line) for line in ledger_path.read_text(encoding="utf-8").splitlines()]
+    assert [event["status"] for event in events] == ["started", "failed"]
 
 
 def test_optional_bearer_auth(monkeypatch):
