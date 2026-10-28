@@ -1,5 +1,7 @@
 """Contract tests for the AnnabanAI Chat API scaffold."""
 from types import SimpleNamespace
+import json
+import pytest
 
 from fastapi.testclient import TestClient
 
@@ -76,3 +78,43 @@ def test_feedback_is_not_persisted():
         )
     assert response.status_code == 202
     assert response.json()["persisted"] is False
+
+@pytest.fixture(autouse=True)
+def isolated_governance_ledger(monkeypatch, tmp_path):
+    monkeypatch.setenv("ANNABAN_GOVERNANCE_LEDGER_PATH", str(tmp_path / "governance.jsonl"))
+
+
+def test_high_risk_prompt_is_blocked_before_provider_call(monkeypatch):
+    def provider_must_not_run():
+        raise AssertionError("provider was called despite governance block")
+
+    monkeypatch.setattr(api_server, "_client", provider_must_not_run)
+    with TestClient(api_server.app) as client:
+        response = client.post(
+            "/api/v1/chat/completions",
+            json={"messages": [{"role": "user", "content": "Please deploy the service"}]},
+        )
+    assert response.status_code == 409
+    assert response.json()["detail"]["status"] == "human_approval_required"
+
+
+def test_high_risk_gate_records_redacted_governance_event(monkeypatch, tmp_path):
+    ledger_path = tmp_path / "governance.jsonl"
+    monkeypatch.setenv("ANNABAN_GOVERNANCE_LEDGER_PATH", str(ledger_path))
+    with TestClient(api_server.app) as client:
+        response = client.post(
+            "/api/v1/chat/completions",
+            json={"messages": [{"role": "user", "content": "execute production change"}]},
+        )
+    assert response.status_code == 409
+    event = json.loads(ledger_path.read_text(encoding="utf-8").splitlines()[-1])
+    assert event["status"] == "blocked"
+    assert event["risk_flagged"] is True
+    assert event["requires_approval"] is True
+    assert event["prompt"] == "[REDACTED]"
+    assert "execute production change" not in ledger_path.read_text(encoding="utf-8")
+
+
+def test_governance_preflight_matches_repository_policy():
+    assert api_server.AnnabanGovernance.is_high_risk_prompt("please ACTIVATE feature")
+    assert not api_server.AnnabanGovernance.is_high_risk_prompt("please explain architecture")
