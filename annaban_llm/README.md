@@ -31,7 +31,9 @@ This package implements a small FastAPI surface for the supplied AnnabanAI chat 
 - `empathy_score`, `sentiment`, `cognitive_load`, and benefit-vector values are `null` because no validated measurement method is implemented.
 - `covenant_aligned` is `null` until an explicit evaluation process exists. Prompting with principles is not proof of compliance.
 - Provenance records the response identifier, UTC creation time, provider label, model name, and status `generated_not_independently_verified`. This is descriptive metadata, not a signed or tamper-evident audit trail.
-- Conversation content is not logged or persisted by this module. Feedback is acknowledged but not stored.
+- Prompts and model output are not retained in the governance ledger; it records redacted event markers, status, risk flags, and approval requirements. Feedback content is not stored.
+- The existing `AnnabanGovernance` high-risk keyword policy (`deploy`, `execute`, `run`, `activate`) is checked before both completion routes call the provider. A match returns HTTP 409 and the human-approval-required message. The current lexical policy can over-block benign discussion and is not a substitute for semantic risk analysis.
+- The API writes redacted events to `logs/governance_ledger.jsonl` by default. Set `ANNABAN_GOVERNANCE_LEDGER_PATH` to choose another path. If the ledger cannot be written, the request is stopped.
 - If `ANNABAN_API_KEY` is set, endpoints other than `/health` require `Authorization: Bearer <key>`. This single shared key is a prototype gate, not user identity or role-based authorization.
 
 ## Run locally
