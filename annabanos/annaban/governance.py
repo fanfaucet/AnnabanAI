@@ -33,7 +33,7 @@ class AnnabanGovernance:
     @classmethod
     def is_high_risk_prompt(cls, text: str) -> bool:
         """Public, side-effect-free preflight check for API adapters."""
-        pattern = r"\\b(" + "|".join(map(re.escape, cls.HIGH_RISK_KEYWORDS)) + r")\\b"
+        pattern = r"\b(" + "|".join(map(re.escape, cls.HIGH_RISK_KEYWORDS)) + r")\b"
         return bool(re.search(pattern, text, flags=re.IGNORECASE))
 
     def _is_high_risk(self, text: str) -> bool:
