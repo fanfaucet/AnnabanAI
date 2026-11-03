@@ -427,6 +427,12 @@
       "event": "Remaining identifiers and non-public claims",
       "status": "PENDING_OR_UNVERIFIED",
       "note": "This implementation does not claim that every registry has been queried live."
+    },
+    {
+      "event_id": "AUDIT-0005",
+      "event": "Primary-source-first sourcing policy and evidence-record schema added",
+      "status": "IMPLEMENTED_NOT_TESTED",
+      "note": "Registry, README, validator, and unit tests updated on the draft PR branch. CI status lookup returned no reported status checks; Python tests have not been run in this session."
     }
   ],
   "guardrails": [
