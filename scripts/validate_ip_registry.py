@@ -43,6 +43,11 @@ def validate(data: dict) -> list[str]:
         errors.append("portfolio valuation must remain explicitly unverified")
     if not data.get("guardrails"):
         errors.append("guardrails must be present")
+    policy = data.get("sourcing_policy")
+    if not isinstance(policy, dict):
+        errors.append("sourcing_policy must be present")
+    elif policy.get("order") != ["OFFICIAL_PRIMARY_SOURCE", "INDEPENDENT_SECONDARY_SOURCE"]:
+        errors.append("sourcing_policy must prioritize official primary sources before independent secondary sources")
     for collection_name in COLLECTIONS:
         collection = data.get(collection_name, [])
         if not isinstance(collection, list):
@@ -57,6 +62,29 @@ def validate(data: dict) -> list[str]:
                 errors.append(f"{collection_name}[{index}] has missing/unknown audit_status: {status!r}")
             if status == "VERIFIED_MATCH" and not (item.get("sources") or item.get("source")):
                 errors.append(f"{collection_name}[{index}] claims VERIFIED_MATCH without a source field")
+            if status in {"PRIMARY_SOURCE_MATCH", "VERIFIED_WITH_SCOPE"}:
+                evidence = item.get("source_evidence", [])
+                has_primary = isinstance(evidence, list) and any(
+                    isinstance(record, dict)
+                    and record.get("source_type") == "OFFICIAL_PRIMARY_SOURCE"
+                    and record.get("source_url")
+                    and record.get("queried_identifier")
+                    and record.get("result") in {"MATCH", "PARTIAL_MATCH"}
+                    and record.get("retrieved_at")
+                    for record in evidence
+                )
+                if not has_primary:
+                    errors.append(f"{collection_name}[{index}] status {status} requires a timestamped primary-source evidence record with identifier and match result")
+            if status == "SECONDARY_CORROBORATION":
+                evidence = item.get("source_evidence", [])
+                if not (isinstance(evidence, list) and any(
+                    isinstance(record, dict)
+                    and record.get("source_type") == "INDEPENDENT_SECONDARY_SOURCE"
+                    and record.get("source_url")
+                    and record.get("retrieved_at")
+                    for record in evidence
+                )):
+                    errors.append(f"{collection_name}[{index}] SECONDARY_CORROBORATION requires timestamped secondary-source evidence")
     if not isinstance(data.get("audit_trail"), list) or not data["audit_trail"]:
         errors.append("audit_trail must be a non-empty list")
     return errors
