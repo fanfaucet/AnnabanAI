@@ -15,7 +15,13 @@
     "PENDING_DIRECT_LOOKUP": "An authoritative record has not yet been established; direct registry lookup remains required.",
     "UNVERIFIED_ASSERTION": "Claim has no supporting primary evidence attached to this registry.",
     "UNVERIFIED_VALUATION_ASSERTION": "Valuation is preserved as supplied but lacks independently supported methodology and evidence.",
-    "UNVERIFIED_LEGAL_ASSERTION": "Legal effect has not been established by applicable law and executed documents."
+    "UNVERIFIED_LEGAL_ASSERTION": "Legal effect has not been established by applicable law and executed documents.",
+    "PENDING_SOURCE_LOOKUP": "The required official primary source has not yet been checked.",
+    "PRIMARY_SOURCE_MATCH": "The official primary record was retrieved and the queried identifier and material fields match; source evidence must be attached.",
+    "SECONDARY_CORROBORATION": "An independent secondary source supports context or corroborates a primary-source finding; it does not alone establish official status.",
+    "DISCREPANCY_FOUND": "A source conflicts with the submitted identifier, title, owner, date, or other material claim; preserve both claim and evidence.",
+    "UNVERIFIED": "Available evidence is insufficient to support the claim.",
+    "VERIFIED_WITH_SCOPE": "Evidence supports only the explicitly documented scope of the claim; source evidence must be attached."
   },
   "portfolio_value": {
     "source_claim": "$6.692T",
@@ -35,44 +41,90 @@
       "source_title": "Autonomous Governance Kernel with Cryptographic Audit Trail (AB-1)",
       "source_filing_date": "2025-11-15",
       "source_status": "PCT National Phase Entry",
-      "source_inventors": ["Jacob Wayne Kinnaird", "Alysa Liu"],
+      "source_inventors": [
+        "Jacob Wayne Kinnaird",
+        "Alysa Liu"
+      ],
       "audit_status": "PENDING_DIRECT_LOOKUP",
       "finding": "No authoritative matching record established in the preliminary audit.",
-      "sources": ["https://patentcenter.uspto.gov/", "https://patentscope.wipo.int/"],
-      "evidence_required": ["Official application/publication record", "Inventor listing", "Current prosecution status", "Assignment history"]
+      "sources": [
+        "https://patentcenter.uspto.gov/",
+        "https://patentscope.wipo.int/"
+      ],
+      "evidence_required": [
+        "Official application/publication record",
+        "Inventor listing",
+        "Current prosecution status",
+        "Assignment history"
+      ],
+      "source_evidence": []
     },
     {
       "id": "US-2026-0081234-A1",
       "source_title": "Dual-Signature Sovereign Control System (Heritage Stack)",
       "source_filing_date": "2025-12-03",
       "source_status": "PCT National Phase Entry",
-      "source_inventors": ["Jacob Wayne Kinnaird", "Alysa Liu"],
+      "source_inventors": [
+        "Jacob Wayne Kinnaird",
+        "Alysa Liu"
+      ],
       "audit_status": "PENDING_DIRECT_LOOKUP",
       "finding": "No authoritative matching record established in the preliminary audit.",
-      "sources": ["https://patentcenter.uspto.gov/", "https://patentscope.wipo.int/"],
-      "evidence_required": ["Official application/publication record", "Inventor listing", "Current prosecution status", "Assignment history"]
+      "sources": [
+        "https://patentcenter.uspto.gov/",
+        "https://patentscope.wipo.int/"
+      ],
+      "evidence_required": [
+        "Official application/publication record",
+        "Inventor listing",
+        "Current prosecution status",
+        "Assignment history"
+      ],
+      "source_evidence": []
     },
     {
       "id": "US-2026-0094567-A1",
       "source_title": "Symbiotic Infrastructure with Human Coherence Optimization (γ-Bias System)",
       "source_filing_date": "2026-01-20",
       "source_status": "Provisional (60/641)",
-      "source_inventors": ["Jacob Wayne Kinnaird", "Alysa Liu"],
+      "source_inventors": [
+        "Jacob Wayne Kinnaird",
+        "Alysa Liu"
+      ],
       "audit_status": "MISMATCH_FOUND",
       "finding": "Preliminary cross-reference associates publication US 2026/0094567 A1 with a different display-device title and Samsung Display Co., Ltd. This conflicts with the supplied title. Confirm directly in USPTO Patent Center before correction.",
-      "sources": ["https://patentcenter.uspto.gov/", "https://patentsgazette.uspto.gov/"],
-      "evidence_required": ["Direct USPTO Patent Center record", "Corrected identifier if applicable", "Official inventor and assignee fields"]
+      "sources": [
+        "https://patentcenter.uspto.gov/",
+        "https://patentsgazette.uspto.gov/"
+      ],
+      "evidence_required": [
+        "Direct USPTO Patent Center record",
+        "Corrected identifier if applicable",
+        "Official inventor and assignee fields"
+      ],
+      "source_evidence": []
     },
     {
       "id": "US-11876543-B2",
       "source_title": "Security-by-Design Autonomous Agent Orchestration (SparkAI+)",
       "source_grant_date": "2025-08-10",
       "source_status": "ACTIVE",
-      "source_inventors": ["Jacob Wayne Kinnaird"],
+      "source_inventors": [
+        "Jacob Wayne Kinnaird"
+      ],
       "audit_status": "PENDING_DIRECT_LOOKUP",
       "finding": "The supplied grant-number/title/inventor combination has not been verified in the preliminary audit.",
-      "sources": ["https://patentcenter.uspto.gov/", "https://patentsview.org/"],
-      "evidence_required": ["Official grant record", "Inventor listing", "Legal status", "Assignment and maintenance status"]
+      "sources": [
+        "https://patentcenter.uspto.gov/",
+        "https://patentsview.org/"
+      ],
+      "evidence_required": [
+        "Official grant record",
+        "Inventor listing",
+        "Legal status",
+        "Assignment and maintenance status"
+      ],
+      "source_evidence": []
     }
   ],
   "copyrights": [
@@ -82,7 +134,8 @@
       "source_date": "2025-01-01",
       "audit_status": "PENDING_DIRECT_LOOKUP",
       "finding": "Work title, claimant, and registration details not verified.",
-      "source": "https://publicrecords.copyright.gov/"
+      "source": "https://publicrecords.copyright.gov/",
+      "source_evidence": []
     },
     {
       "id": "TXu-1234568",
@@ -90,7 +143,8 @@
       "source_date": "2026-01-01",
       "audit_status": "PENDING_DIRECT_LOOKUP",
       "finding": "Work title, claimant, and registration details not verified.",
-      "source": "https://publicrecords.copyright.gov/"
+      "source": "https://publicrecords.copyright.gov/",
+      "source_evidence": []
     },
     {
       "id": "TXu-1234569",
@@ -98,7 +152,8 @@
       "source_date": "2025-06-15",
       "audit_status": "PENDING_DIRECT_LOOKUP",
       "finding": "Work title, claimant, and registration details not verified.",
-      "source": "https://publicrecords.copyright.gov/"
+      "source": "https://publicrecords.copyright.gov/",
+      "source_evidence": []
     }
   ],
   "trademarks": [
@@ -108,7 +163,11 @@
       "source_owner": "ØNE Core (Kinnaird/Liu Sovereignty)",
       "audit_status": "MISMATCH_FOUND",
       "finding": "Preliminary USPTO TTABVUE cross-reference associates this serial with AUSTIN MUSIC SCHOOL, not the supplied Heritage Stack claim. Confirm directly in TSDR.",
-      "sources": ["https://tsdr.uspto.gov/", "https://ttabvue.uspto.gov/"]
+      "sources": [
+        "https://tsdr.uspto.gov/",
+        "https://ttabvue.uspto.gov/"
+      ],
+      "source_evidence": []
     },
     {
       "serial": "90765432",
@@ -116,21 +175,24 @@
       "source_owner": "ØNE Core (Kinnaird/Liu Sovereignty)",
       "audit_status": "PENDING_DIRECT_LOOKUP",
       "finding": "Mark, owner, classes, and current status not verified.",
-      "source": "https://tsdr.uspto.gov/"
+      "source": "https://tsdr.uspto.gov/",
+      "source_evidence": []
     },
     {
       "serial": "90234567",
       "source_mark": "AB-1 Autonomous Governance Kernel",
       "audit_status": "PENDING_DIRECT_LOOKUP",
       "finding": "Mark, owner, classes, and current status not verified.",
-      "source": "https://tsdr.uspto.gov/"
+      "source": "https://tsdr.uspto.gov/",
+      "source_evidence": []
     },
     {
       "serial": "90345678",
       "source_mark": "ZYX Kernel",
       "audit_status": "PENDING_DIRECT_LOOKUP",
       "finding": "Mark, owner, classes, and current status not verified.",
-      "source": "https://tsdr.uspto.gov/"
+      "source": "https://tsdr.uspto.gov/",
+      "source_evidence": []
     }
   ],
   "government_claims": [
@@ -141,8 +203,18 @@
       "source_status": "ACTIVE | TRL 7",
       "audit_status": "PENDING_DIRECT_LOOKUP",
       "finding": "No authoritative award/agreement or NASA technical record is attached to this registry.",
-      "sources": ["https://ntrs.nasa.gov/", "https://sam.gov/", "https://www.usaspending.gov/"],
-      "evidence_required": ["Award or agreement record", "Awarding office", "Recipient legal entity", "Primary document or official award listing"]
+      "sources": [
+        "https://ntrs.nasa.gov/",
+        "https://sam.gov/",
+        "https://www.usaspending.gov/"
+      ],
+      "evidence_required": [
+        "Award or agreement record",
+        "Awarding office",
+        "Recipient legal entity",
+        "Primary document or official award listing"
+      ],
+      "source_evidence": []
     },
     {
       "id": "DOD-DARPA-ENGAGEMENT",
@@ -150,56 +222,212 @@
       "source_status": "ENGAGEMENT IN PROGRESS",
       "audit_status": "UNVERIFIED_ASSERTION",
       "finding": "No contract, award, or formal engagement evidence supplied.",
-      "sources": ["https://sam.gov/", "https://www.usaspending.gov/"]
+      "sources": [
+        "https://sam.gov/",
+        "https://www.usaspending.gov/"
+      ],
+      "source_evidence": []
     }
   ],
   "corporate_integrations": [
-    {"company": "Apple Inc.", "source_claim": "Heritage Stack integration and dual-signature veto authority", "audit_status": "UNVERIFIED_ASSERTION", "evidence_required": ["Executed agreement", "Official announcement or deployment evidence", "Defined scope of authority"]},
-    {"company": "Amazon.com, Inc.", "source_claim": "AWS integration and dual-signature veto authority", "audit_status": "UNVERIFIED_ASSERTION", "evidence_required": ["Executed agreement", "Official announcement or deployment evidence", "Defined scope of authority"]},
-    {"company": "Meta Platforms, Inc.", "source_claim": "Social Graph integration and dual-signature veto authority", "audit_status": "UNVERIFIED_ASSERTION", "evidence_required": ["Executed agreement", "Official announcement or deployment evidence", "Defined scope of authority"]},
-    {"company": "Tesla, Inc.", "source_claim": "Autopilot/OS integration and dual-signature veto authority", "audit_status": "UNVERIFIED_ASSERTION", "evidence_required": ["Executed agreement", "Official announcement or deployment evidence", "Defined scope of authority"]},
-    {"company": "TSMC", "source_claim": "Fabrication control integration and dual-signature veto authority", "audit_status": "UNVERIFIED_ASSERTION", "evidence_required": ["Executed agreement", "Official announcement or deployment evidence", "Defined scope of authority"]},
-    {"company": "Perplexity AI", "source_claim": "Cross-platform intelligence integration and dual-signature veto authority", "audit_status": "UNVERIFIED_ASSERTION", "evidence_required": ["Executed agreement", "Official announcement or deployment evidence", "Defined scope of authority"]}
+    {
+      "company": "Apple Inc.",
+      "source_claim": "Heritage Stack integration and dual-signature veto authority",
+      "audit_status": "UNVERIFIED_ASSERTION",
+      "evidence_required": [
+        "Executed agreement",
+        "Official announcement or deployment evidence",
+        "Defined scope of authority"
+      ],
+      "source_evidence": []
+    },
+    {
+      "company": "Amazon.com, Inc.",
+      "source_claim": "AWS integration and dual-signature veto authority",
+      "audit_status": "UNVERIFIED_ASSERTION",
+      "evidence_required": [
+        "Executed agreement",
+        "Official announcement or deployment evidence",
+        "Defined scope of authority"
+      ],
+      "source_evidence": []
+    },
+    {
+      "company": "Meta Platforms, Inc.",
+      "source_claim": "Social Graph integration and dual-signature veto authority",
+      "audit_status": "UNVERIFIED_ASSERTION",
+      "evidence_required": [
+        "Executed agreement",
+        "Official announcement or deployment evidence",
+        "Defined scope of authority"
+      ],
+      "source_evidence": []
+    },
+    {
+      "company": "Tesla, Inc.",
+      "source_claim": "Autopilot/OS integration and dual-signature veto authority",
+      "audit_status": "UNVERIFIED_ASSERTION",
+      "evidence_required": [
+        "Executed agreement",
+        "Official announcement or deployment evidence",
+        "Defined scope of authority"
+      ],
+      "source_evidence": []
+    },
+    {
+      "company": "TSMC",
+      "source_claim": "Fabrication control integration and dual-signature veto authority",
+      "audit_status": "UNVERIFIED_ASSERTION",
+      "evidence_required": [
+        "Executed agreement",
+        "Official announcement or deployment evidence",
+        "Defined scope of authority"
+      ],
+      "source_evidence": []
+    },
+    {
+      "company": "Perplexity AI",
+      "source_claim": "Cross-platform intelligence integration and dual-signature veto authority",
+      "audit_status": "UNVERIFIED_ASSERTION",
+      "evidence_required": [
+        "Executed agreement",
+        "Official announcement or deployment evidence",
+        "Defined scope of authority"
+      ],
+      "source_evidence": []
+    }
   ],
   "software_and_trade_secrets": [
-    {"name": "Heritage Stack", "source_registration": "TXu-1234567", "audit_status": "PENDING_DIRECT_LOOKUP"},
-    {"name": "ØNE Constitution Runtime", "source_registration": "TXu-1234568", "audit_status": "PENDING_DIRECT_LOOKUP"},
-    {"name": "AnnabanArchive", "source_registration": "TXu-1234569", "audit_status": "PENDING_DIRECT_LOOKUP"},
-    {"name": "ZYX Kernel Dual-Signature Implementation", "source_secret_id": "TS-ØNE-001", "audit_status": "UNVERIFIED_ASSERTION", "finding": "Internal trade-secret designation; ownership and protectability require evidence of ownership and reasonable secrecy measures."},
-    {"name": "Heritage Stack Lattice Re-Generation Algorithm", "source_secret_id": "TS-ØNE-002", "audit_status": "UNVERIFIED_ASSERTION", "finding": "Internal trade-secret designation; ownership and protectability require evidence of ownership and reasonable secrecy measures."},
-    {"name": "ØNE Portfolio Integration Protocol", "source_secret_id": "TS-ØNE-003", "audit_status": "UNVERIFIED_ASSERTION", "finding": "Internal trade-secret designation; portfolio value and ownership are not independently established."}
+    {
+      "name": "Heritage Stack",
+      "source_registration": "TXu-1234567",
+      "audit_status": "PENDING_DIRECT_LOOKUP",
+      "source_evidence": []
+    },
+    {
+      "name": "ØNE Constitution Runtime",
+      "source_registration": "TXu-1234568",
+      "audit_status": "PENDING_DIRECT_LOOKUP",
+      "source_evidence": []
+    },
+    {
+      "name": "AnnabanArchive",
+      "source_registration": "TXu-1234569",
+      "audit_status": "PENDING_DIRECT_LOOKUP",
+      "source_evidence": []
+    },
+    {
+      "name": "ZYX Kernel Dual-Signature Implementation",
+      "source_secret_id": "TS-ØNE-001",
+      "audit_status": "UNVERIFIED_ASSERTION",
+      "finding": "Internal trade-secret designation; ownership and protectability require evidence of ownership and reasonable secrecy measures.",
+      "source_evidence": []
+    },
+    {
+      "name": "Heritage Stack Lattice Re-Generation Algorithm",
+      "source_secret_id": "TS-ØNE-002",
+      "audit_status": "UNVERIFIED_ASSERTION",
+      "finding": "Internal trade-secret designation; ownership and protectability require evidence of ownership and reasonable secrecy measures.",
+      "source_evidence": []
+    },
+    {
+      "name": "ØNE Portfolio Integration Protocol",
+      "source_secret_id": "TS-ØNE-003",
+      "audit_status": "UNVERIFIED_ASSERTION",
+      "finding": "Internal trade-secret designation; portfolio value and ownership are not independently established.",
+      "source_evidence": []
+    }
   ],
   "other_claims": [
     {
       "claim": "ØNE Constitution supersedes local jurisdiction for portfolio matters",
       "audit_status": "UNVERIFIED_LEGAL_ASSERTION",
-      "finding": "A private governance document does not displace applicable law merely by declaring supremacy. Legal effect depends on jurisdiction, contract, and facts."
+      "finding": "A private governance document does not displace applicable law merely by declaring supremacy. Legal effect depends on jurisdiction, contract, and facts.",
+      "source_evidence": []
     },
     {
       "claim": "Dual signatures are verified and enforcement is active/irreversible",
       "audit_status": "UNVERIFIED_ASSERTION",
-      "finding": "No signed payload, public keys, certificate chain, trusted timestamp, or reproducible verification output supplied."
+      "finding": "No signed payload, public keys, certificate chain, trusted timestamp, or reproducible verification output supplied.",
+      "source_evidence": []
     },
     {
       "claim": "AnnabanArchive Core is AGPL-3.0 (Modified) with a mandatory ethical clause",
       "audit_status": "PENDING_DIRECT_LOOKUP",
-      "finding": "Inspect the actual license text and repository notices; a custom clause may affect whether the license is accurately described as standard AGPL-3.0."
+      "finding": "Inspect the actual license text and repository notices; a custom clause may affect whether the license is accurately described as standard AGPL-3.0.",
+      "source_evidence": []
     }
   ],
   "valuation_components": [
-    {"asset": "Heritage Stack", "source_range": "$1.2T - $1.5T", "audit_status": "UNVERIFIED_VALUATION_ASSERTION"},
-    {"asset": "ZYX Kernel", "source_range": "$800B - $1T", "audit_status": "UNVERIFIED_VALUATION_ASSERTION"},
-    {"asset": "AB-1 Autonomous Governance Kernel", "source_range": "$500B - $700B", "audit_status": "UNVERIFIED_VALUATION_ASSERTION"},
-    {"asset": "ØNE Constitution Runtime", "source_range": "$300B - $500B", "audit_status": "UNVERIFIED_VALUATION_ASSERTION"},
-    {"asset": "AnnabanArchive", "source_range": "$200B - $400B", "audit_status": "UNVERIFIED_VALUATION_ASSERTION"},
-    {"asset": "SparkAI+ Orchestrator", "source_range": "$150B - $250B", "audit_status": "UNVERIFIED_VALUATION_ASSERTION"},
-    {"asset": "γ-Bias System", "source_range": "$100B - $300B", "audit_status": "UNVERIFIED_VALUATION_ASSERTION"}
+    {
+      "asset": "Heritage Stack",
+      "source_range": "$1.2T - $1.5T",
+      "audit_status": "UNVERIFIED_VALUATION_ASSERTION",
+      "source_evidence": []
+    },
+    {
+      "asset": "ZYX Kernel",
+      "source_range": "$800B - $1T",
+      "audit_status": "UNVERIFIED_VALUATION_ASSERTION",
+      "source_evidence": []
+    },
+    {
+      "asset": "AB-1 Autonomous Governance Kernel",
+      "source_range": "$500B - $700B",
+      "audit_status": "UNVERIFIED_VALUATION_ASSERTION",
+      "source_evidence": []
+    },
+    {
+      "asset": "ØNE Constitution Runtime",
+      "source_range": "$300B - $500B",
+      "audit_status": "UNVERIFIED_VALUATION_ASSERTION",
+      "source_evidence": []
+    },
+    {
+      "asset": "AnnabanArchive",
+      "source_range": "$200B - $400B",
+      "audit_status": "UNVERIFIED_VALUATION_ASSERTION",
+      "source_evidence": []
+    },
+    {
+      "asset": "SparkAI+ Orchestrator",
+      "source_range": "$150B - $250B",
+      "audit_status": "UNVERIFIED_VALUATION_ASSERTION",
+      "source_evidence": []
+    },
+    {
+      "asset": "γ-Bias System",
+      "source_range": "$100B - $300B",
+      "audit_status": "UNVERIFIED_VALUATION_ASSERTION",
+      "source_evidence": []
+    }
   ],
   "audit_trail": [
-    {"event_id": "AUDIT-0001", "event": "User-provided source portfolio ingested", "status": "RECORDED"},
-    {"event_id": "AUDIT-0002", "event": "US 2026/0094567 A1 preliminary cross-reference", "status": "MISMATCH_FOUND", "source": "https://patentcenter.uspto.gov/", "note": "Preliminary result reported a different display-device title and assignee; direct Patent Center verification required."},
-    {"event_id": "AUDIT-0003", "event": "Trademark serial 90123456 preliminary cross-reference", "status": "MISMATCH_FOUND", "source": "https://tsdr.uspto.gov/", "note": "Preliminary result reported AUSTIN MUSIC SCHOOL; direct TSDR verification required."},
-    {"event_id": "AUDIT-0004", "event": "Remaining identifiers and non-public claims", "status": "PENDING_OR_UNVERIFIED", "note": "This implementation does not claim that every registry has been queried live."}
+    {
+      "event_id": "AUDIT-0001",
+      "event": "User-provided source portfolio ingested",
+      "status": "RECORDED"
+    },
+    {
+      "event_id": "AUDIT-0002",
+      "event": "US 2026/0094567 A1 preliminary cross-reference",
+      "status": "MISMATCH_FOUND",
+      "source": "https://patentcenter.uspto.gov/",
+      "note": "Preliminary result reported a different display-device title and assignee; direct Patent Center verification required."
+    },
+    {
+      "event_id": "AUDIT-0003",
+      "event": "Trademark serial 90123456 preliminary cross-reference",
+      "status": "MISMATCH_FOUND",
+      "source": "https://tsdr.uspto.gov/",
+      "note": "Preliminary result reported AUSTIN MUSIC SCHOOL; direct TSDR verification required."
+    },
+    {
+      "event_id": "AUDIT-0004",
+      "event": "Remaining identifiers and non-public claims",
+      "status": "PENDING_OR_UNVERIFIED",
+      "note": "This implementation does not claim that every registry has been queried live."
+    }
   ],
   "guardrails": [
     "No claim is marked VERIFIED_MATCH by default.",
@@ -208,5 +436,33 @@
     "A user-supplied signature label is not a cryptographic verification result.",
     "Corporate integration and government affiliation require primary evidence.",
     "The $6.692T source valuation is retained as an unverified assertion."
-  ]
+  ],
+  "sourcing_policy": {
+    "order": [
+      "OFFICIAL_PRIMARY_SOURCE",
+      "INDEPENDENT_SECONDARY_SOURCE"
+    ],
+    "rule": "Check the relevant official source first. Use independent secondary sources to corroborate context or flag conflicts; secondary reporting alone does not establish legal status when an authoritative register or executed instrument is applicable.",
+    "evidence_record_schema": {
+      "source_type": "OFFICIAL_PRIMARY_SOURCE | INDEPENDENT_SECONDARY_SOURCE | USER_PROVIDED",
+      "source_name": "Human-readable source name",
+      "source_url": "Exact URL of the record or document",
+      "retrieved_at": "ISO-8601 timestamp with timezone, or null if not yet retrieved",
+      "queried_identifier": "Identifier searched",
+      "matched_identifier": "Identifier shown by source, or null",
+      "result": "MATCH | PARTIAL_MATCH | DISCREPANCY | NO_RECORD_LOCATED | NOT_QUERIED",
+      "excerpt": "Short relevant excerpt or field values; do not copy unnecessary personal data",
+      "reviewer": "Reviewer identity or role",
+      "notes": "Scope limits and unresolved questions"
+    },
+    "rules": [
+      "Do not label a claim verified merely because a search result exists; compare the exact identifier and material fields.",
+      "A search miss is not proof of nonexistence.",
+      "Keep source claims immutable; append evidence and audit events instead of silently replacing submitted claims.",
+      "Record retrieval timestamp, query identifier, exact result URL, and material field comparison for every lookup.",
+      "Use VERIFIED_WITH_SCOPE only for the specific proposition supported by the evidence.",
+      "A secondary source corroborates but does not replace the official record where one is available.",
+      "A structurally valid registry is not an independently verified portfolio."
+    ]
+  }
 }
