@@ -27,9 +27,17 @@ The validator does **not** perform network lookups. A passing result means the r
 - `PENDING_DIRECT_LOOKUP`: authoritative verification is still needed.
 - `UNVERIFIED_ASSERTION`: no supporting primary evidence is attached.
 - `UNVERIFIED_VALUATION_ASSERTION`: preserve source value; do not describe it as an audited valuation.
+- `PENDING_SOURCE_LOOKUP`: official primary source not yet checked.
+- `PRIMARY_SOURCE_MATCH`: official record and material fields match; attach a timestamped evidence record.
+- `SECONDARY_CORROBORATION`: independent secondary support is recorded; this alone does not establish official status.
+- `DISCREPANCY_FOUND`: a source conflicts with the supplied claim; preserve both.
+- `UNVERIFIED`: available evidence is insufficient.
+- `VERIFIED_WITH_SCOPE`: evidence supports only the explicitly recorded scope; attach a timestamped primary-source evidence record.
 
 ## Evidence standards
 
-Prefer official USPTO Patent Center/TSDR, WIPO PATENTSCOPE, U.S. Copyright Public Records System, NASA NTRS, SAM.gov, USAspending.gov, SEC EDGAR, signed contracts, assignments, and reproducible signature-verification output. A search miss is not proof of nonexistence. A hash proves byte integrity only when the compared bytes and trusted digest are known; it does not prove the truth of a claim.
+**Sourcing order: official primary sources first, independent secondary sources second.** Start with official USPTO Patent Center/TSDR, WIPO PATENTSCOPE, U.S. Copyright Public Records System, NASA NTRS, SAM.gov, USAspending.gov, SEC EDGAR, executed contracts, assignments, and reproducible signature-verification output. Use independent secondary sources to corroborate context or identify conflicts; do not substitute them for an available authoritative register or executed instrument.
+
+For each lookup, append a `source_evidence` record with source type, source name, exact record URL, retrieval timestamp, queried identifier, matched identifier, result, short excerpt/field values, reviewer, and scope notes. Preserve original source claims; do not silently overwrite them. A `PRIMARY_SOURCE_MATCH` or `VERIFIED_WITH_SCOPE` status requires a timestamped primary-source record with a queried identifier and explicit match result. A `SECONDARY_CORROBORATION` status requires a timestamped independent secondary-source record. A search miss is not proof of nonexistence. A hash proves byte integrity only when the compared bytes and trusted digest are known; it does not prove the truth of a claim.
 
 The supplied portfolio value of **$6.692T** is intentionally preserved as an unverified source assertion.
