@@ -33,6 +33,35 @@ class RegistryTests(unittest.TestCase):
         self.assertTrue(any("valuation must remain explicitly unverified" in e
                             for e in module.validate(altered)))
 
+    def test_primary_source_match_requires_timestamped_evidence(self):
+        altered = json.loads(json.dumps(self.data))
+        altered["patents"][0]["audit_status"] = "PRIMARY_SOURCE_MATCH"
+        self.assertTrue(any("requires a timestamped primary-source evidence record" in e
+                            for e in module.validate(altered)))
+
+    def test_primary_source_match_with_evidence_is_structurally_allowed(self):
+        altered = json.loads(json.dumps(self.data))
+        altered["patents"][0]["audit_status"] = "PRIMARY_SOURCE_MATCH"
+        altered["patents"][0]["source_evidence"] = [{
+            "source_type": "OFFICIAL_PRIMARY_SOURCE",
+            "source_name": "Test registry",
+            "source_url": "https://example.gov/record/123",
+            "retrieved_at": "2026-11-03T10:00:00Z",
+            "queried_identifier": "TEST-123",
+            "matched_identifier": "TEST-123",
+            "result": "MATCH",
+            "excerpt": "Test record",
+            "reviewer": "unit test",
+            "notes": "Synthetic test fixture only"
+        }]
+        self.assertEqual(module.validate(altered), [])
+
+    def test_secondary_corroboration_requires_timestamped_source(self):
+        altered = json.loads(json.dumps(self.data))
+        altered["patents"][0]["audit_status"] = "SECONDARY_CORROBORATION"
+        self.assertTrue(any("SECONDARY_CORROBORATION requires timestamped secondary-source evidence" in e
+                            for e in module.validate(altered)))
+
     def test_unknown_record_status_fails(self):
         altered = json.loads(json.dumps(self.data))
         altered["patents"][0]["audit_status"] = "ALL_CLEAR"
