@@ -3,6 +3,7 @@ require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 const express = require('express');
 const crypto = require('crypto');
 const fs = require('fs');
+const { HslExecutionGate } = require('../hsl/gate');
 
 const app = express();
 const port = Number(process.env.PAYMENTS_PORT || 3100);
@@ -107,6 +108,27 @@ app.post('/webhooks/stripe', express.raw({ type: 'application/json', limit: '1mb
     (event.type === 'checkout.session.completed' && object.payment_status === 'paid') ||
     event.type === 'invoice.paid';
 
+  // Integrate the HSL gate into the real payment-event path. This creates a
+  // recommendation/evidence/authorization-pending record only; it never fulfills
+  // an order. A separate human-authorized fulfillment integration is required.
+  const hsl = new HslExecutionGate({
+    requiredEvidence: ['stripeEventId', 'stripeObjectId', 'signatureVerified', 'paymentConfirmed']
+  });
+  hsl.recommend({
+    action: 'fulfill_paid_order',
+    target: object.id || event.id,
+    payload: { stripeEventId: event.id, eventType: event.type }
+  });
+  if (paymentConfirmed) {
+    hsl.attachEvidence({
+      stripeEventId: event.id,
+      stripeObjectId: object.id || event.id,
+      signatureVerified: true,
+      paymentConfirmed: true
+    });
+  }
+  const hslAudit = hsl.verifyEventChain();
+
   appendHashChained(auditPath, {
     timestamp: new Date().toISOString(),
     record_type: 'payment_event',
@@ -121,11 +143,20 @@ app.post('/webhooks/stripe', express.raw({ type: 'application/json', limit: '1mb
     payment_confirmed: paymentConfirmed,
     human_review_required: paymentConfirmed,
     fulfillment_status: paymentConfirmed ? 'awaiting_human_approval' : 'not_fulfilled',
+    hsl_state: hsl.state,
+    hsl_audit_head: hslAudit.headHash,
+    hsl_audit_valid: hslAudit.valid,
     evidence_class: 'stripe_signature_verified',
     validation_status: 'verified_webhook_recorded',
     provenance: 'stripe_webhook'
   });
-  return res.status(200).json({ received: true, recorded: true, human_review_required: paymentConfirmed });
+  return res.status(200).json({
+    received: true,
+    recorded: true,
+    human_review_required: paymentConfirmed,
+    hsl_state: hsl.state,
+    fulfillment_status: paymentConfirmed ? 'awaiting_human_approval' : 'not_fulfilled'
+  });
 });
 
 app.use(express.json({ limit: '32kb' }));
