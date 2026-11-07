@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "audit": "node audit_run.js",
-    "payments": "node payments/server.js"
+    "payments": "node payments/server.js",
+    "simulate:payments": "node payments/simulate.js"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
