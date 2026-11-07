@@ -1,8 +1,8 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 const express = require('express');
 const crypto = require('crypto');
 const fs = require('fs');
-const path = require('path');
 
 const app = express();
 const port = Number(process.env.PAYMENTS_PORT || 3100);
