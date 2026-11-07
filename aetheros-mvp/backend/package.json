@@ -7,7 +7,8 @@
     "start": "node server.js",
     "audit": "node audit_run.js",
     "payments": "node payments/server.js",
-    "simulate:payments": "node payments/simulate.js"
+    "simulate:payments": "node payments/simulate.js",
+    "test:integration": "node --test hsl/integration.test.js && node payments/simulate.js"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
