@@ -36,6 +36,16 @@ npm run payments
 
 The service listens on port 3100 by default.
 
+## Local simulation
+
+Run from `aetheros-mvp/backend` after installing dependencies:
+
+```bash
+npm run simulate:payments
+```
+
+This starts the local service with synthetic credentials and temporary files, then checks offer setup state, consent enforcement, valid/invalid webhook signatures, duplicate event handling, audit recording, and the human-approval hold. It does not contact Stripe or move money. The simulation harness is committed but has not been executed in this environment; treat its results as unverified until run locally.
+
 ## Routes
 
 - `GET /health` — configuration status only.
