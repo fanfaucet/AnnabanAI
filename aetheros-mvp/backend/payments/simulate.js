@@ -100,6 +100,8 @@ async function main() {
     const records = await audit.json();
     assert(records.leads.length === 1 && records.payments.length === 1, 'audit contains one lead and one deduplicated payment event');
     assert(records.payments[0].fulfillment_status === 'awaiting_human_approval', 'payment does not auto-provision or execute paid work');
+    assert(records.payments[0].hsl_state === 'AUTHORIZATION_PENDING', 'confirmed payment enters the integrated HSL human-authorization state');
+    assert(records.payments[0].hsl_audit_valid === true && Boolean(records.payments[0].hsl_audit_head), 'HSL workflow audit chain validates and its head is recorded');
 
     process.stdout.write('\nSIMULATION PASSED. No external Stripe API was called and no real payment occurred.\n');
   } finally {
