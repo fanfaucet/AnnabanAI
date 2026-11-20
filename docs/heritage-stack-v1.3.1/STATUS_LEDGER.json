@@ -1,0 +1,64 @@
+{
+  "event_id": "hs-v131-gate1-recon-20261016",
+  "document_control_id": "HS-ATTRIBUTION-REVIEW-RECON-20261016",
+  "project": "AnnabanAI / Heritage Stack v1.3.1",
+  "record_type": "gate_1_reconciliation_record",
+  "record_date_utc": "2026-10-16",
+  "timestamp_note": "Date-only documentation record; no precise event timestamp is asserted."
+  "attribution": {
+    "project_originator_and_attributed_architect": "Jacob Wayne Kinnaird",
+    "handle": "faucet_fan",
+    "ai_assistance_reported_in_source_material": [
+      "OpenAI ChatGPT",
+      "Google Gemini",
+      "Grok"
+    ],
+    "legal_ownership_status": "not determined by this record"
+  },
+  "declared_status": {
+    "lifecycle_stage": "GATE_1_DEFINE",
+    "stage_state": "IN_PROGRESS",
+    "requirements_count": 7,
+    "target_preseed_usd": 250000,
+    "recommendation": "PROCEED_WITH_CONDITIONS",
+    "external_effect": 0
+  },
+  "verified_status_at_document_creation": {
+    "external_funding_secured": false,
+    "capital_disbursed_usd": 0,
+    "physical_lab_tests_completed": false,
+    "hsm_hardware_integrated": false,
+    "patent_filings_confirmed": false,
+    "government_agency_endorsement": false,
+    "verified_merkle_root": null,
+    "controlled_artifacts_independently_reviewed": false
+  },
+  "status_semantics": {
+    "false": "Not established as complete by the evidence available for this documentation package; update only when supporting evidence is reviewed.",
+    "null": "No verified value recorded.",
+    "external_effect": "0 means this record describes internal planning only and does not authorize external action."
+  },
+  "candidate_guidance": {
+    "thermal": [
+      "ASTM E285 (edition and applicability to be confirmed)",
+      "MIL-STD-810H Method 501.7 (applicability to be confirmed)"
+    ],
+    "mechanical": [
+      "IEC 60068-2-7 (applicability to be confirmed)",
+      "MIL-STD-810H Method 514.8 (profile to be justified)"
+    ],
+    "software_security": [
+      "NIST SP 800-218",
+      "NIST SP 800-218A where applicable"
+    ],
+    "ai_risk_management": [
+      "NIST AI 100-1"
+    ]
+  },
+  "next_required_action": "Review and approve controlled Gate 1 artifacts; assign implementation and verification owners; do not authorize Gate 2 until exit criteria are met.",
+  "integrity": {
+    "verified_merkle_root": null,
+    "signature": null,
+    "note": "This JSON file is not digitally signed and is not a verified ledger commit."
+  }
+}
