@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "sourcery": {
+      "url": "https://mcp.sourcery.ai/mcp"
+    }
+  },
+  "annabanaiGovernance": {
+    "mode": "ADVISORY_ONLY",
+    "humanApprovalRequiredForCodeChanges": true,
+    "humanApprovalRequiredForMerge": true,
+    "allowAutoApply": false,
+    "allowAutoMerge": false,
+    "externalEffects": 0,
+    "provenanceLabels": [
+      "VERIFIED",
+      "SOURCERY_REPORTED",
+      "SIMULATED",
+      "UNVERIFIED"
+    ]
+  }
+}
