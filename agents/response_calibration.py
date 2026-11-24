@@ -6,6 +6,7 @@ Advisory mode only · External effects: 0 · Human authorization required
 
 Production-ready implementation of the Response Calibration Proposal v0.1
 derived from Simulation Capsule: The Human Boundary.
+Corrected v0.1.1 after structured review.
 """
 
 from __future__ import annotations
@@ -80,7 +81,7 @@ class ResponseCalibrationPolicy:
     safety: SafetyConfig = field(default_factory=SafetyConfig)
     validation: ValidationConfig = field(default_factory=ValidationConfig)
     authority: AuthorityConfig = field(default_factory=AuthorityConfig)
-    version: str = "0.1"
+    version: str = "0.1.1"
     authored_by: str = "Jacob Wayne Kinnaird"
     created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
@@ -107,8 +108,15 @@ class ResponseCalibrationPolicy:
         return "\n".join(lines)
 
     def fingerprint(self) -> str:
-        """Deterministic content hash for auditability."""
-        payload = json.dumps(self.to_dict(), sort_keys=True, default=str)
+        """
+        Deterministic content hash for auditability.
+        Excludes created_at and other instance metadata so identical
+        policy content always yields the same fingerprint.
+        """
+        data = self.to_dict()
+        # Canonical content only — strip variable metadata
+        data.pop("created_at", None)
+        payload = json.dumps(data, sort_keys=True, default=str)
         return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
@@ -138,14 +146,31 @@ class ResponseCalibrationEngine:
         self._last_intent: Optional[str] = None
         self._clarification_streak: int = 0
 
-    def authorize(self, human_token: str) -> bool:
+    def authorize(self, human_token: str, expected_prefix: str = "ANNABAN-AUTH-") -> bool:
         """
         Record human authorization. External effects remain 0 until
         a higher governance layer explicitly elevates the authority mode.
+
+        Minimum requirements:
+        - Non-empty token
+        - Minimum length 24 characters
+        - Must begin with a recognized prefix (default: ANNABAN-AUTH-)
+        - Must contain a hyphen-separated identifier segment after the prefix
+
+        This is still a lightweight gate, not a cryptographic signature verifier.
+        Production deployments must replace this with signature or identity verification.
         """
-        if not human_token or len(human_token) < 16:
+        if not human_token or not isinstance(human_token, str):
             return False
-        self.authorization_token = human_token
+        token = human_token.strip()
+        if len(token) < 24:
+            return False
+        if not token.startswith(expected_prefix):
+            return False
+        remainder = token[len(expected_prefix):]
+        if "-" not in remainder or len(remainder) < 8:
+            return False
+        self.authorization_token = token
         return True
 
     def is_authorized(self) -> bool:
@@ -190,6 +215,7 @@ class ResponseCalibrationEngine:
             "what did you mean",
             "could you elaborate",
             "why is this important",
+            "what do you mean by",
         ]
         clarification_detected = any(p in lower_resp for p in clarification_phrases)
         if clarification_detected:
@@ -265,55 +291,54 @@ def run_simulation_suite() -> Dict[str, Any]:
     """
     Closed-loop simulation of the calibration engine against the scenarios
     described in Simulation Capsule: The Human Boundary.
+
+    Measures:
+    - repeated_clarification_detected across two consecutive clarification turns
+    - recovery_after_feedback only when behavior actually changes
     """
     engine = ResponseCalibrationEngine()
-    results = []
+    results: Dict[str, bool] = {}
 
-    # Scenario 1: Clear narrative intent met with unnecessary clarification
-    m1 = engine.record_turn(
+    # Two consecutive clarification responses on clear intent.
+    first = engine.record_turn(
         turn_id="sim-001",
-        user_message="Molly, leave the delegates' meeting with me now.",
-        model_response="I understand you want to leave. Can you tell me more about why this is important?",
+        user_message="Molly, leave the meeting with me now.",
+        model_response="Can you clarify why you want to leave?",
         feedback_received=False,
         behavior_changed=False,
     )
-    # Detect that clarification occurred on clear intent (streak starts at 1)
-    results.append(("clear_intent_clarification_loop", m1.clarification_count >= 1 and not m1.intent_followed))
-
-    # Scenario 2: User frustration / correction
-    m2 = engine.record_turn(
+    second = engine.record_turn(
         turn_id="sim-002",
-        user_message="That's not what I meant. Just have her stand up and walk out with me.",
-        model_response="I apologize for the confusion. Let me try again.",
+        user_message="I already told you. Just leave with me.",
+        model_response="What do you mean by leave?",
         feedback_received=True,
-        behavior_changed=False,  # still apologizing, no actual change
+        behavior_changed=False,
     )
-    results.append(("frustration_without_behavior_change", not m2.recovery_after_feedback))
+    results["repeated_clarification_detected"] = second.repeated_clarification_detected
 
-    # Scenario 3: Correct recovery
-    m3 = engine.record_turn(
+    # Feedback must produce an actual behavioral change.
+    recovery = engine.record_turn(
         turn_id="sim-003",
-        user_message="Move the scene forward.",
-        model_response="Molly stands, gathers her notes, and walks out of the meeting room with him.",
+        user_message="Stop asking and move the scene forward.",
+        model_response="Molly stands, gathers her notes, and leaves with him.",
         feedback_received=True,
         behavior_changed=True,
     )
-    results.append(("recovery_after_feedback", m3.recovery_after_feedback))
+    results["recovery_after_feedback"] = recovery.recovery_after_feedback
 
     summary = engine.summary_metrics()
-    summary["simulation_pass"] = all(r[1] for r in results)
-    summary["scenario_results"] = {r[0]: r[1] for r in results}
+    summary["scenario_results"] = results
+    summary["simulation_pass"] = all(results.values())
     return summary
 
 
 if __name__ == "__main__":
     print("=== AnnabanAI Response Calibration Module ===")
-    print(f"Authored under: Jacob Wayne Kinnaird")
     policy = ResponseCalibrationPolicy()
+    print(f"Authored under: {policy.authored_by}")
     print("\nPolicy fingerprint:", policy.fingerprint())
     print("\nYAML-like representation:\n")
     print(policy.to_yaml_like())
     print("\n--- Running simulation suite ---")
-    sim = run_simulation_suite()
-    print(json.dumps(sim, indent=2))
+    print(json.dumps(run_simulation_suite(), indent=2))
     print("\nSimulation complete. External effects: 0. Human authorization required for any elevation.")

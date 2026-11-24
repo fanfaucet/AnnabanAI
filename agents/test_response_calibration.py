@@ -22,11 +22,12 @@ class TestResponseCalibrationPolicy(unittest.TestCase):
         self.assertEqual(policy.authored_by, "Jacob Wayne Kinnaird")
 
     def test_fingerprint_stable(self):
+        """Identical policy content must produce identical fingerprints."""
         p1 = ResponseCalibrationPolicy()
         p2 = ResponseCalibrationPolicy()
-        # Fingerprints differ only by created_at; content structure is stable
+        self.assertEqual(p1.fingerprint(), p2.fingerprint())
+        self.assertEqual(len(p1.fingerprint()), 64)
         self.assertIn("response_calibration", p1.to_yaml_like())
-        self.assertTrue(len(p1.fingerprint()) == 64)
 
 
 class TestResponseCalibrationEngine(unittest.TestCase):
@@ -49,7 +50,12 @@ class TestResponseCalibrationEngine(unittest.TestCase):
 
     def test_authorization_gate(self):
         self.assertFalse(self.engine.is_authorized())
-        self.assertTrue(self.engine.authorize("human-auth-token-2026-kinnaird-001"))
+        # Reject weak tokens
+        self.assertFalse(self.engine.authorize("short"))
+        self.assertFalse(self.engine.authorize("no-prefix-but-long-enough-token-123456"))
+        # Accept correctly structured token
+        valid = "ANNABAN-AUTH-2026-kinnaird-001"
+        self.assertTrue(self.engine.authorize(valid))
         self.assertTrue(self.engine.is_authorized())
 
     def test_advisory_guidance(self):
@@ -67,6 +73,8 @@ class TestSimulationSuite(unittest.TestCase):
         self.assertTrue(result["simulation_pass"])
         self.assertIn("intent_following_rate", result)
         self.assertEqual(result["external_effects"], 0)
+        self.assertTrue(result["scenario_results"]["repeated_clarification_detected"])
+        self.assertTrue(result["scenario_results"]["recovery_after_feedback"])
 
 
 if __name__ == "__main__":
