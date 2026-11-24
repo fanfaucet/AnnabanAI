@@ -3,6 +3,18 @@
 
 Welcome to **AnnabanAI Lattice Nursery**, a conceptual project exploring how humans and AI systems might collaborate inside a **distributed, cooperative intelligence environment**.
 
+
+## Featured Research: Starlink Echo Telemetry (Simulation Only)
+
+A hypothetical research statement explores AI-assisted interpretation of Starlink-related echo telemetry while preserving evidence provenance and human authorization. It does **not** claim live Starlink access, OpenAI–Starlink integration, or a completed repair.
+
+- [Read the research statement](research/starlink_echo_telemetry_research.md)
+- **Project architect and human author:** Jacob Wayne Kinnaird
+- **AI drafting assistance:** ChatGPT
+- **xAI attribution:** No xAI authorship or endorsement is asserted without separate documentation.
+- **Operating boundary:** Advisory-only · Simulation-only · External effects: 0
+
+
 ## Annaban AI + AnnabanAI + Annaban Human Safety
 
 This project treats **Annaban AI** and **AnnabanAI** as the same core platform: a reflection-first, multi-agent system designed to keep humans in authority.
