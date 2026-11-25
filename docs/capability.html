@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1020">
+<meta name="description" content="AnnabanAI capability overview: AI governance, decision provenance, auditability, and human-authorized workflows. Authored under Jacob Wayne Kinnaird.">
+<title>AnnabanAI — Govern by Design</title>
+<style>
+:root{color-scheme:dark;--bg:#080d19;--panel:#111a2d;--line:#273550;--ink:#f4f7ff;--muted:#a9b7ce;--mint:#8df0d0;--blue:#9dbbff}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 78% 0%,#1c3154 0,transparent 36%),var(--bg);color:var(--ink);font:16px/1.65 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+a{color:var(--mint)}.wrap{width:min(1100px,calc(100% - 40px));margin:auto}.nav{display:flex;justify-content:space-between;align-items:center;padding:24px 0;border-bottom:1px solid #ffffff17}.brand{font-weight:800;letter-spacing:.08em}.brand span{color:var(--mint)}.nav a{font-size:.9rem;text-decoration:none;color:var(--muted)}
+.hero{padding:100px 0 76px;max-width:850px}.eyebrow{text-transform:uppercase;letter-spacing:.18em;font-size:.76rem;color:var(--mint);font-weight:800}.hero h1{font-size:clamp(2.8rem,7vw,5.7rem);line-height:1.02;letter-spacing:-.055em;margin:20px 0 24px}.hero h1 em{font-style:normal;color:var(--mint)}.lead{font-size:clamp(1.1rem,2.4vw,1.35rem);color:var(--muted);max-width:740px}.byline{margin-top:30px;color:#dbe5f6}.byline strong{color:white}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px}.btn{display:inline-block;padding:12px 18px;border-radius:9px;text-decoration:none;font-weight:750;border:1px solid var(--line)}.btn.primary{background:var(--mint);color:#08131a;border-color:var(--mint)}.btn.secondary{color:var(--ink);background:#ffffff08}
+.strip{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:12px 0 82px}.metric{border:1px solid var(--line);background:#ffffff05;padding:22px;border-radius:14px}.metric b{display:block;font-size:1.05rem}.metric span{font-size:.9rem;color:var(--muted)}
+section{padding:24px 0 62px}.section-head{max-width:700px;margin-bottom:28px}.section-head h2{font-size:clamp(1.8rem,4vw,2.7rem);letter-spacing:-.035em;line-height:1.15;margin:8px 0 12px}.section-head p{color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.card{border:1px solid var(--line);border-radius:15px;background:linear-gradient(145deg,#17233a,#0e1627);padding:24px}.num{font-size:.8rem;color:var(--mint);font-weight:800;letter-spacing:.1em}.card h3{margin:10px 0;font-size:1.15rem}.card p{color:var(--muted);margin-bottom:0;font-size:.95rem}
+.principle{margin:10px 0 70px;padding:34px;border:1px solid #5b8f8a66;border-radius:18px;background:linear-gradient(110deg,#12302f,#101c2d)}.principle blockquote{font-size:clamp(1.5rem,3.6vw,2.4rem);font-weight:800;letter-spacing:-.035em;line-height:1.2;margin:12px 0}.principle p{color:#c1d9d8;margin:0}
+.usecases{display:grid;grid-template-columns:1fr 1fr;gap:12px}.usecase{padding:15px 18px;border:1px solid var(--line);border-radius:10px;background:#ffffff04}.usecase strong{display:block}.usecase span{color:var(--muted);font-size:.9rem}
+.engage{padding:38px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(135deg,#17243b,#101728);margin:10px 0 80px}.engage h2{font-size:2rem;line-height:1.15;margin:8px 0 12px}.engage p{color:var(--muted);max-width:760px}
+.note{font-size:.86rem;color:#94a4bc;border-top:1px solid var(--line);padding:24px 0 40px}.note strong{color:#d9e3f4}
+@media(max-width:760px){.hero{padding:70px 0 50px}.strip,.grid{grid-template-columns:1fr}.usecases{grid-template-columns:1fr}.principle,.engage{padding:24px}.nav{gap:16px}.nav a{max-width:140px;text-align:right}}
+</style>
+</head>
+<body>
+<header class="wrap nav"><div class="brand">ANNABAN<span>AI</span></div><a href="#capabilities">Explore capabilities ↓</a></header>
+<main class="wrap">
+<section class="hero">
+<div class="eyebrow">AI governance · Provenance · Human control</div>
+<h1>Make AI decisions<br><em>reviewable by design.</em></h1>
+<p class="lead">AnnabanAI is an architecture concept for organizations that need clearer evidence trails, accountable authorization, and structured oversight across AI-assisted workflows.</p>
+<p class="byline">Authored under <strong>Jacob Wayne Kinnaird</strong><br>AnnabanAI / AnnabanOS · Capability overview</p>
+<div class="actions"><a class="btn primary" href="#engage">Discuss a pilot</a><a class="btn secondary" href="https://github.com/fanfaucet/AnnabanAI">Explore the repository ↗</a></div>
+</section>
+<div class="strip" aria-label="Core principles">
+<div class="metric"><b>Traceable records</b><span>Capture events, decisions, and supporting evidence.</span></div>
+<div class="metric"><b>Human authorization</b><span>Separate recommendations from permission to act.</span></div>
+<div class="metric"><b>Reviewable outcomes</b><span>Make assumptions and evidence easier to inspect.</span></div>
+</div>
+<section id="capabilities">
+<div class="section-head"><div class="eyebrow">What it is designed to support</div><h2>Governance that can be examined.</h2><p>A practical framework for building observable, auditable AI-assisted processes—not a promise that any system is automatically safe or compliant.</p></div>
+<div class="grid">
+<article class="card"><div class="num">01 / PROVENANCE</div><h3>Decision evidence trails</h3><p>Structure records of system events, decision inputs, timestamps, and links between successive audit entries.</p></article>
+<article class="card"><div class="num">02 / OVERSIGHT</div><h3>Human-gated workflows</h3><p>Represent a clear boundary between an AI proposal, a human authorization, and any later implementation.</p></article>
+<article class="card"><div class="num">03 / MULTI-AGENT</div><h3>Disagreement tracking</h3><p>Compare model outputs, preserve competing interpretations, and make unresolved conflicts visible to reviewers.</p></article>
+<article class="card"><div class="num">04 / ASSURANCE</div><h3>Audit and incident review</h3><p>Support post-event reconstruction and structured review, subject to the completeness and trustworthiness of recorded inputs.</p></article>
+<article class="card"><div class="num">05 / DECISION SUPPORT</div><h3>Operational analysis</h3><p>Model trade, logistics, implementation options, and commercial scenarios with assumptions separated from observed results.</p></article>
+<article class="card"><div class="num">06 / GOVERNANCE</div><h3>Four-rail review</h3><p>Organize evaluation around verification, constraints, transparency, and auditability, with accountable human review.</p></article>
+</div>
+</section>
+<div class="principle"><div class="eyebrow">Operating principle</div><blockquote>AI recommends.<br>Humans decide.<br>Everything is logged.</blockquote><p>Transport is not authority. Integrity is not authorization. A record of an event does not, by itself, prove the event was true.</p></div>
+<section>
+<div class="section-head"><div class="eyebrow">Potential applications</div><h2>Where a pilot could start.</h2><p>Use cases should be selected based on a real operational need, accessible evidence, and a measurable acceptance test.</p></div>
+<div class="usecases">
+<div class="usecase"><strong>Enterprise AI governance</strong><span>Decision logs, review paths, and accountability controls.</span></div>
+<div class="usecase"><strong>Software assurance</strong><span>Traceability, structured evidence, and validation workflows.</span></div>
+<div class="usecase"><strong>Maritime logistics</strong><span>Trade-lane scenarios, negotiation assumptions, and audit trails.</span></div>
+<div class="usecase"><strong>Regulated operations</strong><span>Human review and evidence organization for consequential workflows.</span></div>
+</div>
+</section>
+<section id="engage" class="engage">
+<div class="eyebrow">Commercial engagement</div><h2>Start with a defined problem.<br>Prove the workflow.</h2>
+<p>Potential engagements include architecture reviews, governance prototypes, auditability assessments, implementation planning, and—where product readiness and rights are established—software licensing discussions.</p>
+<div class="actions"><a class="btn primary" href="https://github.com/fanfaucet/AnnabanAI">Review project materials ↗</a><a class="btn secondary" href="https://github.com/fanfaucet/AnnabanAI/issues">Open a project discussion ↗</a></div>
+</section>
+<footer class="note"><strong>Authorship and evidence note.</strong> This page attributes the described architecture and project contributions to Jacob Wayne Kinnaird as documented by project records. Attribution is not, by itself, a legal determination of ownership or licensing rights. The capabilities described are design goals and potential applications; no production readiness, certification, regulatory compliance, government adoption, customer results, or independent endorsement is implied. Hash-linked logs can support integrity checks but cannot alone establish source-event truth or prevent unsafe downstream actions. Validate implementation, security, and performance for each deployment. <br><br>© AnnabanAI project · Capability statement · Evidence-first, human-controlled implementation.</footer>
+</main>
+</body>
+</html>
