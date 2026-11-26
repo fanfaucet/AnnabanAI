@@ -1,6 +1,6 @@
 """Human-gated external-agent gateway. No provider calls or code execution."""
 from __future__ import annotations
-import hashlib, json, os, threading, time
+import hashlib, hmac, json, os, threading, time
 from pathlib import Path
 from typing import Any
 from .auth_manager import AuthManager
@@ -26,7 +26,7 @@ class JsonlAuditLedger:
             canonical = json.dumps(body, sort_keys=True, separators=(",", ":"))
             digest = hashlib.sha256(canonical.encode()).hexdigest()
             record = {**body, "record_hash": digest}
-            line = json.dumps(record, sort_keys=True, separators=(",", ":")) + "\n"
+            line = json.dumps(record, sort_keys=True, separators=(",", ":")) + "\\n"
             if self.path:
                 fd = os.open(self.path, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600)
                 try:
@@ -40,10 +40,23 @@ class JsonlAuditLedger:
 
 class AgentGateway:
     def __init__(self, auth: AuthManager, policy: CapabilityPolicy,
-                 sessions: SessionManager | None = None, audit: JsonlAuditLedger | None = None):
+                 sessions: SessionManager | None = None, audit: JsonlAuditLedger | None = None,
+                 human_approval_key: str | None = None):
         self.auth, self.policy = auth, policy
         self.sessions = sessions or SessionManager()
         self.audit = audit or JsonlAuditLedger()
+        # The key is a separate control-plane credential; an approver name alone is not authentication.
+        self._human_approval_key_digest = (
+            hashlib.sha256(human_approval_key.encode()).hexdigest()
+            if human_approval_key else None
+        )
+
+    def _verify_human(self, approval_key: str | None) -> None:
+        if self._human_approval_key_digest is None or not approval_key:
+            raise PermissionError("Human approval authentication is not configured")
+        supplied = hashlib.sha256(approval_key.encode()).hexdigest()
+        if not hmac.compare_digest(self._human_approval_key_digest, supplied):
+            raise PermissionError("Invalid human approval credential")
 
     def login(self, agent_id: str, api_key: str, signed_token: str,
               requested_capabilities: set[str]) -> dict[str, Any]:
@@ -67,8 +80,10 @@ class AgentGateway:
                               reason=str(exc), external_effects=0)
             return {"status": "denied", "reason": str(exc), "external_effects": 0}
 
-    def approve(self, session_id: str, approver_id: str, capabilities: set[str]) -> dict[str, Any]:
+    def approve(self, session_id: str, approver_id: str, capabilities: set[str],
+                approval_key: str | None = None) -> dict[str, Any]:
         try:
+            self._verify_human(approval_key)
             agent_id = self.sessions.get(session_id).agent_id
             approved = self.policy.validate_request(agent_id, capabilities)
             session = self.sessions.approve(session_id, approver_id, approved)
@@ -84,8 +99,10 @@ class AgentGateway:
     def list_sessions(self) -> list[dict[str, Any]]:
         return [self._view(s) for s in self.sessions.list_sessions()]
 
-    def revoke(self, session_id: str, approver_id: str) -> dict[str, Any]:
+    def revoke(self, session_id: str, approver_id: str,
+               approval_key: str | None = None) -> dict[str, Any]:
         try:
+            self._verify_human(approval_key)
             session = self.sessions.revoke(session_id, approver_id)
             self.audit.append("EXTERNAL_AGENT_SESSION_REVOKED", agent_id=session.agent_id,
                               session_id=session_id, approver_id=approver_id, external_effects=0)
