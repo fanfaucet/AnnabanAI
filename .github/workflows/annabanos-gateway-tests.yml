@@ -1,0 +1,30 @@
+name: AnnabanOS External Gateway Tests
+
+on:
+  pull_request:
+    paths:
+      - "annabanos/gateway/**"
+      - "annabanos/tests/test_external_agent_gateway.py"
+      - ".github/workflows/annabanos-gateway-tests.yml"
+  push:
+    branches:
+      - main
+      - "codex/**"
+    paths:
+      - "annabanos/gateway/**"
+      - "annabanos/tests/test_external_agent_gateway.py"
+      - ".github/workflows/annabanos-gateway-tests.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  gateway-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run external-agent gateway tests
+        run: python -m unittest annabanos.tests.test_external_agent_gateway -v
