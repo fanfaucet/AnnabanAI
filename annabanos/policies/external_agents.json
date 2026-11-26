@@ -1,0 +1,11 @@
+{
+  "policy_version": "external-agent-capabilities-v1",
+  "external_agents": {
+    "codex_external": {"provider": "OpenAI", "capabilities": ["analysis", "audit_review"]},
+    "grok_external": {"provider": "xAI", "capabilities": ["analysis", "audit_review"]},
+    "claude_external": {"provider": "Anthropic", "capabilities": ["analysis", "audit_review"]}
+  },
+  "forbidden_capabilities": ["kernel_boot", "policy_edit", "audit_edit", "scheduler_access", "spawn_agent", "external_execution", "credential_read"],
+  "default_status": "pending_human_approval",
+  "external_effects": 0
+}
